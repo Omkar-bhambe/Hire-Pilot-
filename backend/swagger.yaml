@@ -1,0 +1,377 @@
+openapi: 3.0.0
+info:
+  title: AI Interview System API
+  description: |
+    REST API for the AI Interview System. Provides endpoints for managing interviews, 
+    candidates, and administrative operations.
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+
+servers:
+  - url: http://localhost:5000
+    description: Development server
+
+tags:
+  - name: Health
+    description: Health check and monitoring endpoints
+  - name: Interview
+    description: Candidate-facing interview operations
+  - name: Admin
+    description: Administrative operations
+  - name: Backup
+    description: Database backup and restore operations
+
+paths:
+  /:
+    get:
+      summary: API Root
+      tags: [Health]
+      responses:
+        "200":
+          description: API information
+          content:
+            application/json:
+              example:
+                status: success
+                message: AI Interview System API
+                version: 1.0.0
+
+  /health:
+    get:
+      summary: Health check
+      tags: [Health]
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              example:
+                status: healthy
+                message: AI Interview System is running
+                version: 1.0.0
+
+  /health/detailed:
+    get:
+      summary: Detailed health check
+      tags: [Health]
+      responses:
+        "200":
+          description: Detailed health status
+          content:
+            application/json:
+              example:
+                status: healthy
+                timestamp: "2024-01-01T00:00:00"
+                version: 1.0.0
+                components:
+                  database:
+                    status: healthy
+                    size_bytes: 1024
+                  interviews:
+                    status: healthy
+                    count: 10
+                  backup:
+                    status: healthy
+
+  /api/interview/create:
+    post:
+      summary: Create new interview
+      tags: [Interview]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - fullName
+                - email
+                - jobDescription
+              properties:
+                fullName:
+                  type: string
+                  description: Candidate's full name
+                email:
+                  type: string
+                  format: email
+                  description: Candidate's email
+                jobDescription:
+                  type: string
+                  description: Job description for the interview
+                personality:
+                  type: string
+                  enum: [friendly, neutral]
+                  default: friendly
+                resume:
+                  type: file
+                  description: Resume file (PDF or text)
+      responses:
+        "201":
+          description: Interview created successfully
+          content:
+            application/json:
+              example:
+                status: success
+                interview_id: interview_1234567890
+                message: Interview created successfully
+                questions_count: 5
+        "400":
+          description: Missing required fields
+        "500":
+          description: Internal server error
+
+  /api/interview/{interview_id}:
+    get:
+      summary: Get interview details
+      tags: [Interview]
+      parameters:
+        - name: interview_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Interview details
+        "404":
+          description: Interview not found
+
+  /api/interview/{interview_id}/start:
+    post:
+      summary: Start interview
+      tags: [Interview]
+      parameters:
+        - name: interview_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Interview started
+        "404":
+          description: Interview not found
+        "409":
+          description: Interview already started
+
+  /api/interview/{interview_id}/answer:
+    post:
+      summary: Submit answer
+      tags: [Interview]
+      parameters:
+        - name: interview_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - question_index
+                - answer
+              properties:
+                question_index:
+                  type: integer
+                answer:
+                  type: string
+                duration:
+                  type: integer
+      responses:
+        "200":
+          description: Answer saved
+        "400":
+          description: Invalid request
+        "404":
+          description: Interview not found
+
+  /api/interview/{interview_id}/complete:
+    post:
+      summary: Complete interview
+      tags: [Interview]
+      parameters:
+        - name: interview_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Interview completed
+        "404":
+          description: Interview not found
+
+  /api/admin/login:
+    post:
+      summary: Admin login
+      tags: [Admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        "200":
+          description: Login successful
+        "401":
+          description: Invalid credentials
+
+  /api/admin/interviews:
+    get:
+      summary: List all interviews
+      tags: [Admin]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: List of interviews
+
+  /api/admin/interviews/{interview_id}/report:
+    get:
+      summary: Get interview report
+      tags: [Admin]
+      parameters:
+        - name: interview_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Interview report
+        "404":
+          description: Interview not found
+
+  /api/admin/statistics:
+    get:
+      summary: Get statistics
+      tags: [Admin]
+      responses:
+        "200":
+          description: Statistics data
+
+  /api/backup/create:
+    post:
+      summary: Create backup
+      tags: [Backup]
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        "201":
+          description: Backup created
+
+  /api/backup/list:
+    get:
+      summary: List backups
+      tags: [Backup]
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: List of backups
+
+  /api/backup/restore/{backup_name}:
+    post:
+      summary: Restore backup
+      tags: [Backup]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: backup_name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Backup restored
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+        error:
+          type: string
+        message:
+          type: string
+
+    Interview:
+      type: object
+      properties:
+        interview_id:
+          type: string
+        full_name:
+          type: string
+        email:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    InterviewList:
+      type: object
+      properties:
+        status:
+          type: string
+        interviews:
+          type: array
+          items:
+            $ref: "#/components/schemas/Interview"
+        total:
+          type: integer
+
+    Statistics:
+      type: object
+      properties:
+        total_interviews:
+          type: integer
+        completed:
+          type: integer
+        in_progress:
+          type: integer
+        average_score:
+          type: number

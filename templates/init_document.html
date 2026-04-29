@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HirePilot | Document Bulk Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .modal-overlay { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); }
+        /* Smooth fade for drop overlay */
+        .drop-overlay { transition: all 0.2s ease-in-out; }
+    </style>
+</head>
+<body class="p-6 lg:p-12">
+
+    <div class="max-w-7xl mx-auto">
+       <header class="flex justify-between items-center mb-10">
+    <div class="flex items-center gap-6">
+        <a href="/admin" class="group flex items-center justify-center h-11 w-11 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm" title="Back to Dashboard">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </a>
+
+        <div>
+            <h1 class="text-4xl font-black text-slate-900 tracking-tight">
+                HirePilot<span class="text-indigo-600">.</span>
+            </h1>
+            <p class="text-slate-500 font-medium uppercase tracking-widest text-xs">
+                Document-Driven Agentic Screening
+            </p>
+        </div>
+    </div>
+
+    <div id="bulk-actions" class="hidden gap-3 flex">
+        <button id="zip-btn" class="bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold text-sm hover:shadow-lg transition flex items-center gap-2">
+            <span>📥</span> Download All Reports (.ZIP)
+        </button>
+    </div>
+</header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+
+            <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 flex flex-col justify-between">
+                <div>
+                    <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-4">1. Job Description Document</label>
+
+                    <div id="jd-drop-zone" class="relative border-2 border-dashed border-slate-200 rounded-3xl p-12 text-center hover:border-indigo-400 transition cursor-pointer overflow-hidden group">
+                        <input type="file" id="jd-file" class="hidden" accept=".pdf,.docx">
+
+                        <div class="space-y-3 relative z-10">
+                            <p class="text-4xl group-hover:scale-110 transition-transform">📄</p>
+                            <p id="jd-info" class="text-sm font-bold text-slate-700">Click or Drag JD (PDF/DOCX)</p>
+                        </div>
+
+                        <div class="drop-overlay absolute inset-0 bg-indigo-50/95 opacity-0 pointer-events-none flex flex-col items-center justify-center z-20 backdrop-blur-sm rounded-3xl">
+                            <p class="text-5xl animate-bounce mb-4">⬇️</p>
+                            <p class="text-xl font-black text-indigo-700">Drop Job Description Here</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 p-4 bg-indigo-50 rounded-2xl flex justify-between items-center">
+                    <span class="text-sm font-bold text-indigo-900">Shortlist Bar (%):</span>
+                    <input type="number" id="threshold" value="75" class="w-16 p-2 rounded-xl border-none text-center font-bold text-indigo-600">
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 flex flex-col justify-between">
+                <div>
+                    <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-4">2. Candidate Data (ZIP/Bulk)</label>
+
+                    <div id="resume-drop-zone" class="relative border-2 border-dashed border-slate-200 rounded-3xl p-12 text-center hover:border-indigo-400 transition cursor-pointer overflow-hidden group">
+                        <input type="file" id="resumes" multiple class="hidden" accept=".pdf,.docx,.zip">
+
+                        <div class="space-y-3 relative z-10">
+                            <p class="text-4xl group-hover:scale-110 transition-transform">📦</p>
+                            <p id="resume-info" class="text-sm font-bold text-slate-700">Click or Drag Resumes / ZIP</p>
+                        </div>
+
+                        <div class="drop-overlay absolute inset-0 bg-indigo-50/95 opacity-0 pointer-events-none flex flex-col items-center justify-center z-20 backdrop-blur-sm rounded-3xl">
+                            <p class="text-5xl animate-bounce mb-4">⬇️</p>
+                            <p class="text-xl font-black text-indigo-700">Drop Bulk Files Here</p>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="runDocumentProcess()" id="main-btn" class="w-full bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-lg mt-6 hover:bg-indigo-700 transition active:scale-95">
+                    Execute Agentic Screening
+                </button>
+            </div>
+        </main>
+
+        <div id="dashboard" class="hidden bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50 text-xs font-black text-slate-400 uppercase">
+                    <tr>
+                        <th class="p-6">Candidate</th>
+                        <th class="p-6">Match Score</th>
+                        <th class="p-6">Communication</th>
+                        <th class="p-6">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="results-body" class="text-sm text-slate-600"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="preview-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden">
+            <div class="p-8 border-b border-slate-100 flex justify-between items-center">
+                <h3 id="modal-name" class="text-2xl font-black text-slate-900"></h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-900 text-3xl font-light">&times;</button>
+            </div>
+            <div class="p-8 max-h-[70vh] overflow-y-auto">
+                <div class="mb-6 p-6 bg-indigo-50 rounded-2xl border-l-4 border-indigo-500">
+                    <p class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-2">AI Agent Analysis</p>
+                    <p id="modal-justification" class="text-slate-700 leading-relaxed text-sm"></p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-2xl inline-block">
+                    <p class="text-xs font-black text-slate-400 uppercase">Match Score</p>
+                    <p id="modal-score" class="text-2xl font-black text-indigo-600"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================= DRAG AND DROP LOGIC =================
+
+        // Helper function to initialize Drag & Drop features for a zone
+        function setupDragDrop(zoneId, inputId, infoId, isMultiple) {
+            const zone = document.getElementById(zoneId);
+            const input = document.getElementById(inputId);
+            const info = document.getElementById(infoId);
+            const overlay = zone.querySelector('.drop-overlay');
+
+            // 1. Handle Click events (Fallback)
+            zone.addEventListener('click', () => input.click());
+            input.addEventListener('change', handleFileSelect);
+
+            // 2. Handle Drag Events to show/hide the overlay sign
+            ['dragenter', 'dragover'].forEach(eventName => {
+                zone.addEventListener(eventName, (e) => {
+                    e.preventDefault(); e.stopPropagation();
+                    // Show the overlay sign
+                    overlay.classList.remove('opacity-0', 'pointer-events-none');
+                    zone.classList.add('border-indigo-500', 'scale-[1.02]');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                zone.addEventListener(eventName, (e) => {
+                    e.preventDefault(); e.stopPropagation();
+                    // Hide the overlay sign
+                    overlay.classList.add('opacity-0', 'pointer-events-none');
+                    zone.classList.remove('border-indigo-500', 'scale-[1.02]');
+                }, false);
+            });
+
+            // 3. Handle the actual DROP event
+            zone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+
+                // Manually assign dropped files to the hidden input
+                if (files.length > 0) {
+                    input.files = files;
+                    // Trigger visual update
+                    handleFileSelect({ target: input });
+                }
+            }, false);
+
+            function handleFileSelect(e) {
+                if (isMultiple) {
+                    info.innerText = `${e.target.files.length} items staged.`;
+                } else if (e.target.files.length > 0) {
+                    info.innerText = e.target.files[0].name;
+                }
+            }
+        }
+
+        // Initialize both zones
+        setupDragDrop('jd-drop-zone', 'jd-file', 'jd-info', false);
+        setupDragDrop('resume-drop-zone', 'resumes', 'resume-info', true);
+
+
+        // ================= EXISTING PROCESS LOGIC =================
+        let currentBatch = [];
+        let currentBatchId = "";
+
+        async function runDocumentProcess() {
+            const formData = new FormData();
+            const jdFile = document.getElementById('jd-file').files[0];
+            const resumes = document.getElementById('resumes').files;
+
+            if(!jdFile || resumes.length === 0) return alert("Please upload both JD and Resumes.");
+
+            formData.append('jd_file', jdFile);
+            formData.append('threshold', document.getElementById('threshold').value);
+            for(let f of resumes) formData.append('resumes', f);
+
+            const btn = document.getElementById('main-btn');
+            btn.innerText = "Agentic AI is reasoning...";
+            btn.disabled = true;
+
+            const res = await fetch('/api/process-document-bulk', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            currentBatch = data.candidates;
+            currentBatchId = data.batch_id;
+            renderTable();
+            btn.innerText = "Execute Agentic Screening";
+            btn.disabled = false;
+        }
+
+        function renderTable() {
+            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('bulk-actions').classList.remove('hidden');
+            document.getElementById('zip-btn').onclick = () => location.href = `/api/download-all-zip/${currentBatchId}`;
+
+            const tbody = document.getElementById('results-body');
+            tbody.innerHTML = currentBatch.map((c, i) => `
+                <tr class="border-b hover:bg-slate-50 transition">
+                    <td class="p-6 font-bold text-slate-800">${c.name}</td>
+                    <td class="p-6"><span class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full font-black">${c.match_score}%</span></td>
+                    <td class="p-6 text-xs font-bold uppercase text-indigo-500">${c.status}</td>
+                    <td class="p-6">
+                        <button onclick="previewCandidate(${i})" class="bg-slate-100 px-4 py-2 rounded-lg font-bold text-xs hover:bg-indigo-600 hover:text-white transition">Quick View</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function previewCandidate(i) {
+            const c = currentBatch[i];
+            document.getElementById('modal-name').innerText = c.name;
+            document.getElementById('modal-justification').innerText = c.justification;
+            document.getElementById('modal-score').innerText = c.match_score + "%";
+            document.getElementById('preview-modal').classList.remove('hidden');
+        }
+
+        function closeModal() { document.getElementById('preview-modal').classList.add('hidden'); }
+    </script>
+</body>
+</html>

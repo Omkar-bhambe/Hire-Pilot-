@@ -1,0 +1,55 @@
+{% extends "base.html" %} {% block title %}Admin Login{% endblock %} {% block
+content %}
+<div class="form-container" style="max-width: 450px">
+  <div style="text-align: center; margin-bottom: 40px">
+    <div style="font-size: 48px; margin-bottom: 15px">🔐</div>
+    <h1 style="font-size: 28px; font-weight: 700">Admin Login</h1>
+    <p style="font-size: 14px; color: #666">Interview Management System</p>
+  </div>
+
+  <!-- ❌ NO FORM SUBMIT -->
+  <div>
+    <div id="errorMessage" style="color: red; display: none"></div>
+
+    <input id="email" placeholder="Email" class="form-input" /><br /><br />
+    <input
+      id="password"
+      type="password"
+      placeholder="Password"
+      class="form-input"
+    /><br /><br />
+
+    <button onclick="login()" class="btn btn-primary" style="width: 100%">
+      Login
+    </button>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+  async function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const res = await fetch("/api/auth/login", {
+      method: "POST", // ✅ FIX
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (data.status === "success") {
+      localStorage.setItem("token", data.token);
+      window.location.href = "/dashboard";
+    } else {
+      document.getElementById("errorMessage").innerText = "Invalid credentials";
+      document.getElementById("errorMessage").style.display = "block";
+    }
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HirePilot - Login</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23818cf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 19l9 2-9-18-9 18 9-2zm0 0v-8' /></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        body.page-enter {
+            opacity: 1;
+        }
+        .bg-hero {
+            background-image: url('/static/background.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="bg-hero min-h-screen flex items-center justify-center font-sans text-white overflow-hidden">
+
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-teal-900/70 to-blue-900/80 mix-blend-multiply"></div>
+
+    <div class="relative z-10 w-full max-w-md p-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl">
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="bg-indigo-100 text-indigo-700 p-4 rounded-xl mb-6 text-xs font-bold border border-indigo-200 shadow-lg flex items-center space-x-2 animate-pulse">
+                <span>🛡️</span>
+                <p>{{ message }}</p>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="text-center mb-8">
+            <div class="flex justify-center items-center space-x-2 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+                <h2 class="text-3xl font-bold">Hire<span class="text-amber-500">Pilot</span></h2>
+            </div>
+            <p class="text-teal-200/80">Welcome back. Please sign in to your professional dashboard.</p>
+        </div>
+
+        <form action="/login" method="POST" class="space-y-6">
+            <div>
+                <label for="email" class="block text-sm font-medium text-teal-100 mb-2">Email Address</label>
+                <input type="email" id="email" name="email" class="w-full px-4 py-3 bg-white/20 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent placeholder-teal-300/50 text-white transition-all" placeholder="hr@icem.edu" required>
+            </div>
+
+            <div>
+                <div class="flex items-center justify-between mb-2">
+                    <label for="password" class="block text-sm font-medium text-teal-100">Password</label>
+                    <a href="{{ url_for('forgot_password') }}" class="text-sm text-teal-300 hover:text-white transition-colors font-semibold">
+                        Forgot password?
+                    </a>
+                </div>
+                <input type="password" id="password" name="password" class="w-full px-4 py-3 bg-white/20 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent placeholder-teal-300/50 text-white transition-all" placeholder="••••••••" required>
+            </div>
+
+            <div>
+                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-lg font-bold text-white bg-gradient-to-r from-teal-500 to-blue-600 hover:from-teal-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-400 focus:ring-offset-blue-900 transition-all duration-300 hover:shadow-teal-500/50 hover:scale-[1.02]">
+                    Sign In
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-6 text-center text-sm text-teal-200/80 border-t border-white/10 pt-6">
+            <p>Don't have an account? <a href="/register" class="font-bold text-teal-300 hover:text-white transition-colors underline underline-offset-4">Request Access</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.body.classList.add('page-enter');
+        });
+    </script>
+
+</body>
+</html>

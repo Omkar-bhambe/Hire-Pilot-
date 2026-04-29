@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HirePilot Pro | Secure Assessment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; -webkit-user-select: none; background-color: #f8fafc; }
+        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border: 1px solid rgba(241, 245, 249, 1); }
+        .secure-dark { filter: brightness(0.05) blur(50px); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .q-dot { transition: all 0.2s ease; cursor: pointer; border: 2px solid #e2e8f0; }
+        .q-attempted { background-color: #4f46e5; color: white; border-color: #4f46e5; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2); }
+        .q-review { background-color: #f59e0b; color: white; border-color: #f59e0b; }
+        .section-tab-active { color: #4f46e5; border-bottom: 3px solid #4f46e5; font-weight: 800; }
+    </style>
+</head>
+<body class="h-screen overflow-hidden" oncontextmenu="return false;">
+
+    <div id="welcome-gate" class="fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-xl flex items-center justify-center p-6">
+        <div class="max-w-xl w-full bg-white rounded-[3rem] p-12 shadow-2xl border border-slate-100">
+            <div class="text-center mb-10">
+                <div class="h-16 w-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white text-2xl font-black mx-auto mb-6">HP</div>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tight">Ready, {{ candidate.name }}?</h1>
+                <p class="text-slate-400 font-bold uppercase tracking-widest text-[10px] mt-2">{{ role }} Assessment</p>
+            </div>
+
+            <div class="space-y-4 mb-10">
+                <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <span class="text-xl">🛡️</span>
+                    <div>
+                        <p class="text-xs font-black text-slate-900 uppercase">Proctoring Locked</p>
+                        <p class="text-xs text-slate-500 font-medium">3 Tab switches or window resizes will trigger auto-submission.</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <span class="text-xl">📸</span>
+                    <div>
+                        <p class="text-xs font-black text-slate-900 uppercase">Anti-Photo Active</p>
+                        <p class="text-xs text-slate-500 font-medium">Screen content will vanish if a mobile device is detected.</p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="startAssessment()" class="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:bg-indigo-700 transition shadow-xl shadow-indigo-100">
+                Initialize Secure Session
+            </button>
+        </div>
+    </div>
+
+    <div class="flex h-full">
+        <aside class="w-80 bg-slate-900 flex flex-col p-8 border-r border-slate-800">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="h-8 w-8 bg-indigo-500 rounded-lg flex items-center justify-center text-white font-black text-xs">HP</div>
+                <span class="text-white font-black text-sm tracking-tighter">HirePilot <span class="text-slate-500">PRO</span></span>
+            </div>
+
+            <div id="shield-zone" class="rounded-[2rem] overflow-hidden border-4 border-slate-800 bg-black aspect-video relative mb-8 shadow-2xl">
+                <video id="webcam" autoplay playsinline class="w-full h-full object-cover scale-x-[-1]"></video>
+                <div class="absolute bottom-3 left-3 flex items-center gap-2 px-2 py-1 bg-black/40 backdrop-blur-md rounded-lg">
+                    <div class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span class="text-[8px] font-black text-white uppercase tracking-widest">Live Monitoring</span>
+                </div>
+            </div>
+
+            <div class="flex-grow overflow-y-auto no-scrollbar">
+                <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6">Assessment Map</p>
+                <div class="grid grid-cols-5 gap-3" id="nav-grid">
+                    {% for q in questions %}
+                    <div onclick="jumpTo({{ loop.index0 }})" id="nav-dot-{{ loop.index0 }}"
+                         class="q-dot h-10 w-10 rounded-xl flex items-center justify-center text-[10px] font-black text-slate-400">
+                        {{ loop.index }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mt-8 pt-8 border-t border-slate-800 flex justify-between items-center">
+                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Violations</span>
+                <span id="v-count" class="text-sm font-black text-red-500">0 / 3</span>
+            </div>
+        </aside>
+
+        <main class="flex-grow flex flex-col overflow-hidden bg-white">
+            <header class="px-12 py-6 border-b border-slate-100 flex justify-between items-center">
+                <div class="flex gap-10">
+                    <button onclick="switchSection('Aptitude')" id="tab-Aptitude" class="pb-2 text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all">Aptitude</button>
+                    <button onclick="switchSection('Technical')" id="tab-Technical" class="pb-2 text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all">Technical</button>
+                    <button onclick="switchSection('Coding')" id="tab-Coding" class="pb-2 text-[10px] font-black uppercase tracking-widest text-slate-400 transition-all">Coding</button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="timer" class="bg-slate-900 text-white px-6 py-2.5 rounded-xl font-mono font-black text-lg shadow-lg">--:--</span>
+                </div>
+            </header>
+
+            <div id="quiz-mount" class="flex-grow overflow-y-auto p-16 scroll-smooth">
+                {% for q in questions %}
+                {% set q_idx = loop.index0 %}
+                <div class="question-unit hidden space-y-10" data-category="{{ q.category|default('Technical') }}" id="q-container-{{ q_idx }}">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest">Section: {{ q.category|default('Technical') }}</span>
+                            <h2 class="text-3xl font-extrabold text-slate-900 mt-6 leading-tight max-w-3xl">{{ q.question }}</h2>
+                        </div>
+                        <label class="flex items-center gap-3 cursor-pointer p-3 bg-slate-50 rounded-2xl hover:bg-amber-50 transition border border-slate-100">
+                            <input type="checkbox" onchange="markForReview({{ q_idx }})" id="review-{{ q_idx }}" class="w-4 h-4 rounded text-amber-500">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Review Later</span>
+                        </label>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4 max-w-2xl">
+                        {% for opt in q.options %}
+                        <label onclick="saveProgress({{ q_idx }})" class="group flex items-center p-6 bg-white border-2 border-slate-100 rounded-3xl cursor-pointer hover:border-indigo-600 hover:bg-indigo-50/30 transition-all">
+                            <input type="radio" name="q{{ q_idx }}" value="{{ opt }}" class="w-5 h-5 text-indigo-600 border-slate-300">
+                            <span class="ml-5 font-bold text-slate-700 group-hover:text-indigo-900">{{ opt }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <footer class="px-12 py-8 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+                <button onclick="navigateSection(-1)" id="prev-btn" class="px-8 py-3 bg-white border border-slate-200 rounded-2xl text-[10px] font-black uppercase text-slate-400 hover:text-slate-900 transition disabled:opacity-0">Previous Section</button>
+                <div class="flex gap-4">
+                    <button onclick="navigateSection(1)" id="next-btn" class="px-10 py-4 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-indigo-100">Save & Next Section</button>
+                    <button onclick="showSummary()" id="review-submit-btn" class="hidden px-10 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg">Go to Review Hub</button>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <div id="summary-modal" class="fixed inset-0 z-[110] bg-slate-900/95 backdrop-blur-xl hidden items-center justify-center p-10">
+        <div class="max-w-4xl w-full bg-white rounded-[4rem] p-16 shadow-2xl">
+            <h2 class="text-4xl font-black text-slate-900 mb-2">Review Assessment</h2>
+            <p class="text-slate-400 font-medium mb-12">Confirm your answers before final cloud submission.</p>
+
+            <div class="grid grid-cols-3 gap-8 mb-12">
+                <div class="bg-emerald-50 p-8 rounded-[2.5rem] border border-emerald-100">
+                    <p class="text-4xl font-black text-emerald-600" id="sum-att">0</p>
+                    <p class="text-[10px] font-black uppercase text-emerald-400 tracking-widest mt-2">Attempted</p>
+                </div>
+                <div class="bg-red-50 p-8 rounded-[2.5rem] border border-red-100">
+                    <p class="text-4xl font-black text-red-600" id="sum-miss">0</p>
+                    <p class="text-[10px] font-black uppercase text-red-400 tracking-widest mt-2">Unattempted</p>
+                </div>
+                <div class="bg-amber-50 p-8 rounded-[2.5rem] border border-amber-100">
+                    <p class="text-4xl font-black text-amber-600" id="sum-rev">0</p>
+                    <p class="text-[10px] font-black uppercase text-amber-400 tracking-widest mt-2">Marked for Review</p>
+                </div>
+            </div>
+
+            <div class="flex gap-6">
+                <button onclick="closeSummary()" class="flex-grow bg-slate-100 text-slate-600 py-6 rounded-[2rem] font-black uppercase text-xs tracking-widest">Continue Solving</button>
+                <button onclick="submitAssessment('manual')" class="flex-grow bg-indigo-600 text-white py-6 rounded-[2rem] font-black uppercase text-xs tracking-widest shadow-2xl shadow-indigo-200">Confirm Final Submission</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sections = ['Aptitude', 'Technical', 'Coding'];
+        let currentSectionIdx = 0;
+        let violations = 0;
+        const totalQ = {{ questions|length }};
+
+        function startAssessment() {
+            document.getElementById('welcome-gate').style.display = 'none';
+            switchSection(sections[0]);
+            initCamera();
+            startTimer({{ time_limit }});
+        }
+
+        // --- NAVIGATION LOGIC ---
+        function switchSection(secName) {
+            currentSectionIdx = sections.indexOf(secName);
+
+            // 1. Update Tabs UI
+            sections.forEach(s => {
+                const tab = document.getElementById(`tab-${s}`);
+                tab.classList.toggle('section-tab-active', s === secName);
+                tab.classList.toggle('text-slate-400', s !== secName);
+            });
+
+            // 2. Show Questions for this section
+            document.querySelectorAll('.question-unit').forEach(el => {
+                el.classList.toggle('hidden', el.dataset.category.toLowerCase() !== secName.toLowerCase());
+            });
+
+            // 3. Update Nav Buttons
+            document.getElementById('prev-btn').disabled = (currentSectionIdx === 0);
+
+            if (currentSectionIdx === sections.length - 1) {
+                document.getElementById('next-btn').classList.add('hidden');
+                document.getElementById('review-submit-btn').classList.remove('hidden');
+            } else {
+                document.getElementById('next-btn').classList.remove('hidden');
+                document.getElementById('review-submit-btn').classList.add('hidden');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function navigateSection(direction) {
+            const nextIdx = currentSectionIdx + direction;
+            if (nextIdx >= 0 && nextIdx < sections.length) {
+                switchSection(sections[nextIdx]);
+            }
+        }
+
+        function saveProgress(idx) {
+            document.getElementById(`nav-dot-${idx}`).classList.add('q-attempted');
+        }
+
+        function markForReview(idx) {
+            const isChecked = document.getElementById(`review-${idx}`).checked;
+            document.getElementById(`nav-dot-${idx}`).classList.toggle('q-review', isChecked);
+        }
+
+        function jumpTo(idx) {
+            const el = document.getElementById(`q-container-${idx}`);
+            switchSection(el.dataset.category);
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            closeSummary();
+        }
+
+        function showSummary() {
+            let att = document.querySelectorAll('.q-attempted').length;
+            document.getElementById('sum-att').innerText = att;
+            document.getElementById('sum-miss').innerText = totalQ - att;
+            document.getElementById('sum-rev').innerText = document.querySelectorAll('.q-review').length;
+            document.getElementById('summary-modal').classList.replace('hidden', 'flex');
+        }
+
+        function closeSummary() {
+            document.getElementById('summary-modal').classList.replace('flex', 'hidden');
+        }
+
+        // --- TIMER & PROCTORING ---
+        function startTimer(m) {
+            let t = m * 60;
+            const timerEl = document.getElementById('timer');
+            const interval = setInterval(() => {
+                let min = Math.floor(t / 60);
+                let sec = t % 60;
+                timerEl.innerText = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+                if (t-- <= 0) {
+                    clearInterval(interval);
+                    submitAssessment('timeout');
+                }
+            }, 1000);
+        }
+
+        // FIXED VIOLATION DETECTION: Only active after Welcome Gate is gone
+        document.addEventListener('visibilitychange', () => {
+            const isGateClosed = document.getElementById('welcome-gate').style.display === 'none';
+            if (document.hidden && isGateClosed) {
+                violations++;
+                document.getElementById('v-count').innerText = `${violations} / 3`;
+                alert(`⚠️ SECURITY WARNING: Tab switch detected. Breach ${violations}/3.`);
+                if (violations >= 3) submitAssessment('disqualified');
+            }
+        });
+
+        async function initCamera() {
+            try {
+                const s = await navigator.mediaDevices.getUserMedia({ video: true });
+                document.getElementById('webcam').srcObject = s;
+
+                // MOCK PHOTO DETECT (Add your actual MediaPipe logic here)
+                window.onkeydown = (e) => {
+                    if (e.key === 'PrintScreen') {
+                        document.body.classList.add('secure-dark');
+                        setTimeout(() => document.body.classList.remove('secure-dark'), 3000);
+                    }
+                }
+            } catch (err) { console.error("Camera required."); }
+        }
+
+        async function submitAssessment(type) {
+            const answers = {};
+            document.querySelectorAll('input[type="radio"]:checked').forEach(i => answers[i.name] = i.value);
+
+            await fetch('/api/submit-test', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    session_id: "{{ session_id }}",
+                    c_id: "{{ c_id }}",
+                    answers: answers,
+                    violations: violations,
+                    type: type
+                })
+            });
+
+            document.body.innerHTML = `
+                <div class="h-screen flex items-center justify-center bg-slate-950 text-white text-center p-10">
+                    <div class="max-w-md">
+                        <div class="h-20 w-20 bg-emerald-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-8 animate-bounce">✓</div>
+                        <h1 class="text-4xl font-black mb-4">Transfer Complete</h1>
+                        <p class="text-slate-400 font-medium leading-relaxed">Your results and proctoring logs have been secured in the HirePilot vault. Evaluation is in progress.</p>
+                    </div>
+                </div>`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HirePilot | Session Control Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8FAFC; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid #E2E8F0; }
+        .status-pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <div class="flex">
+        <aside class="w-72 h-screen bg-white border-r border-slate-200 fixed hidden lg:flex flex-col">
+            <div class="p-8">
+                <h1 class="text-2xl font-black text-slate-900 tracking-tighter">HirePilot<span class="text-indigo-600">.</span></h1>
+            </div>
+            <nav class="flex-grow px-4 space-y-2">
+                <a href="/admin" class="flex items-center space-x-3 p-3 rounded-xl bg-indigo-50 text-indigo-700 font-bold">
+                    <span>📊</span> <span>Session Manager</span>
+                </a>
+                <a href="/index" class="flex items-center space-x-3 p-3 rounded-xl text-slate-500 font-semibold hover:bg-slate-50">
+                    <span>🔍</span> <span>AI Screener</span>
+                </a>
+                <a href="/history" class="flex items-center space-x-3 p-3 rounded-xl text-slate-500 font-semibold hover:bg-slate-50">
+                    <span>📂</span> <span>Archive</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="lg:ml-72 flex-grow p-6 lg:p-12">
+
+            <header class="flex justify-between items-center mb-10">
+                <div>
+                    <h2 class="text-3xl font-black text-slate-800 tracking-tight">Recruitment Sessions</h2>
+                    <p class="text-slate-500 font-medium">Create and track agentic screening pipelines</p>
+                </div>
+                <button onclick="toggleModal('create-modal')" class="bg-indigo-600 text-white px-6 py-3 rounded-2xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all flex items-center gap-2">
+                    <span class="text-xl">+</span> New Session
+                </button>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="glass-card p-6 rounded-[32px] shadow-sm">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Pipelines</p>
+                    <h3 id="active-count" class="text-3xl font-black text-slate-900 mt-2">--</h3>
+                </div>
+                <div class="glass-card p-6 rounded-[32px] shadow-sm">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Candidates</p>
+                    <h3 id="total-candidates" class="text-3xl font-black text-indigo-600 mt-2">--</h3>
+                </div>
+                <div class="glass-card p-6 rounded-[32px] shadow-sm">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Avg. Match Rate</p>
+                    <h3 class="text-3xl font-black text-emerald-500 mt-2">72%</h3>
+                </div>
+            </div>
+
+            <section class="glass-card rounded-[40px] overflow-hidden shadow-xl bg-white">
+                <div class="p-8 border-b border-slate-100 flex justify-between items-center">
+                    <h4 class="font-bold text-slate-800">Live Session Tracking</h4>
+                    <span class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-bold">Cloud Synced</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            <tr>
+                                <th class="p-6">Session Identity</th>
+                                <th class="p-6">Progress Status</th>
+                                <th class="p-6">Created On</th>
+                                <th class="p-6 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="session-list" class="text-sm font-semibold text-slate-600">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="create-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+        <div class="bg-white w-full max-w-lg rounded-[40px] shadow-2xl p-10">
+            <h3 class="text-2xl font-black text-slate-900 mb-2">Initialize Session</h3>
+            <p class="text-sm text-slate-500 mb-8">This will create a dedicated Firestore sub-collection.</p>
+
+            <form id="session-form" class="space-y-6">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Session Name</label>
+                    <input type="text" name="session_name" required placeholder="e.g., SDE_Intern_Batch_2026"
+                           class="w-full p-4 rounded-2xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <button type="submit" class="w-full bg-slate-900 text-white font-black py-5 rounded-3xl hover:bg-indigo-600 transition shadow-xl">
+                    Create & Open Screener 🚀
+                </button>
+                <button type="button" onclick="toggleModal('create-modal')" class="w-full text-slate-400 font-bold text-sm">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleModal(id) {
+            document.getElementById(id).classList.toggle('hidden');
+        }
+
+        // 1. Handle New Session Creation
+        document.getElementById('session-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            const res = await fetch('/api/create-session', { method: 'POST', body: formData });
+            const data = await res.json();
+
+            if(data.status === 'success') {
+                // Redirect directly to the screener with the new session ID
+                window.location.href = `/index?session_id=${data.session_id}`;
+            }
+        });
+
+        // 2. Load Existing Sessions for Tracking
+        async function loadSessions() {
+            // This API will fetch from Firestore collection 'resume_screening'
+            const res = await fetch('/api/get-sessions');
+            const sessions = await res.json();
+
+            const list = document.getElementById('session-list');
+            list.innerHTML = sessions.map(s => `
+                <tr class="border-b hover:bg-slate-50 transition cursor-pointer">
+                    <td class="p-6">
+                        <p class="text-slate-900 font-bold">${s.session_name}</p>
+                        <p class="text-[10px] text-slate-400">${s.id}</p>
+                    </td>
+                    <td class="p-6">
+                        <span class="flex items-center gap-2">
+                            <span class="h-2 w-2 rounded-full bg-indigo-500 status-pulse"></span>
+                            ${s.status || 'Active'}
+                        </span>
+                    </td>
+                    <td class="p-6 text-slate-400">${s.created_at}</td>
+                    <td class="p-6 text-right">
+                        <button onclick="location.href='/index?session_id=${s.id}'" class="bg-slate-100 px-4 py-2 rounded-xl text-xs font-bold hover:bg-indigo-600 hover:text-white transition">Manage</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('active-count').innerText = sessions.length;
+        }
+
+        window.onload = loadSessions;
+    </script>
+</body>
+</html>

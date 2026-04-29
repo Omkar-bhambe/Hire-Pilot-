@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HirePilot | Document Submission</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-[#f8fafc] p-6 md:p-20">
+
+    <div class="max-w-2xl mx-auto bg-white p-10 md:p-16 rounded-[3rem] shadow-2xl shadow-slate-200">
+        <div class="text-center mb-12">
+            <div class="h-16 w-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white text-2xl mx-auto mb-6 shadow-xl shadow-indigo-100 font-black">HP</div>
+            <h1 class="text-3xl font-black text-slate-900 tracking-tight">Document Vault</h1>
+            <p class="text-slate-400 font-medium mt-2">Securely upload files for verification.</p>
+        </div>
+
+        <form id="uploadForm" class="space-y-10">
+            {% for doc in config %}
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ doc.name }}</label>
+                    <span class="text-[9px] font-bold text-indigo-500 bg-indigo-50 px-2 py-1 rounded-md">
+                        {{ 'Multiple Files Allowed' if doc.type == 'multiple' else 'Single File' }}
+                    </span>
+                </div>
+                <input type="file" name="{{ doc.name }}"
+                       {% if doc.type == 'multiple' %}multiple{% endif %}
+                       class="block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-slate-900 file:text-white hover:file:bg-indigo-600 file:transition-all cursor-pointer border-2 border-dashed border-slate-100 p-4 rounded-2xl">
+            </div>
+            {% endfor %}
+
+            <div class="pt-6">
+                <button type="submit" id="submitBtn" class="w-full bg-indigo-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-indigo-200 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                    Finalize Submission
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "Uploading to Cloud...";
+            btn.disabled = true;
+
+            const formData = new FormData(e.target);
+            formData.append('session_id', "{{ session_id }}");
+            formData.append('c_id', "{{ c_id }}");
+
+            const response = await fetch('/api/upload-files', { method: 'POST', body: formData });
+            if(response.ok) {
+                alert("Upload complete! HR has been notified.");
+                window.location.reload();
+            }
+        };
+    </script>
+</body>
+</html>

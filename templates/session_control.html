@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HirePilot | {{ data.session_name }} Control Room</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfcfd; }
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #f2f4f7; }
+        .action-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .action-card:hover { transform: translateY(-8px); border-color: #6366f1; }
+    </style>
+</head>
+<body class="min-h-screen pb-20">
+
+    <nav class="glass-nav sticky top-0 z-50 px-8 py-4 mb-8">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <a href="/history" class="h-10 w-10 flex items-center justify-center bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-indigo-600 transition">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                </a>
+                <h2 class="text-sm font-bold text-slate-800 tracking-tight">Back to Recruitment History</h2>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Drive Status</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-[1400px] mx-auto p-12">
+        <div class="flex justify-between items-start mb-12">
+            <div>
+                <h1 class="text-4xl font-black text-slate-900 tracking-tight">{{ data.session_name }}</h1>
+                <p class="text-slate-500 font-medium mt-2">Drive Management Console | Batch {{ data.year }}</p>
+            </div>
+            <div class="bg-indigo-50 p-6 rounded-3xl border border-indigo-100 text-right">
+                <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Current Stage</p>
+                <p class="text-xl font-black text-indigo-700">{{ data.status }}</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            <a href="/admin/screen/{{ session_id }}" class="action-card p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm hover:shadow-xl group">
+                <div class="h-14 w-14 bg-blue-600 rounded-2xl flex items-center justify-center text-2xl mb-6 shadow-lg shadow-blue-100">🔍</div>
+                <h3 class="font-black text-xl text-slate-900">Resume Screening</h3>
+                <p class="text-sm text-slate-400 mt-2 leading-relaxed">Match profiles against the pre-filled JD context.</p>
+                <div class="mt-8 flex items-center text-blue-600 font-bold text-xs uppercase tracking-widest">
+                    Enter Tool <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                </div>
+            </a>
+
+            <a href="/admin/test-manager/{{ session_id }}" class="action-card p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm hover:shadow-xl group">
+                <div class="h-14 w-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-2xl mb-6 shadow-lg shadow-indigo-100">⚡</div>
+                <h3 class="font-black text-xl text-slate-900">Assessment Center</h3>
+                <p class="text-sm text-slate-500 mt-2 leading-relaxed">Manage technical tests and monitor proctoring.</p>
+                <div class="mt-8 flex items-center text-indigo-600 font-bold text-xs uppercase tracking-widest">
+                    Enter Tool <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                </div>
+            </a>
+
+            <a href="/admin/document-manager/{{ session_id }}" class="action-card p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm hover:shadow-xl group">
+                <div class="h-14 w-14 bg-emerald-500 rounded-2xl flex items-center justify-center text-2xl mb-6 shadow-lg shadow-emerald-100">📂</div>
+                <h3 class="font-black text-xl text-slate-900">Onboarding Vault</h3>
+                <p class="text-sm text-slate-500 mt-2 leading-relaxed">Collect KYC and verify candidate compliance docs.</p>
+                <div class="mt-8 flex items-center text-emerald-600 font-bold text-xs uppercase tracking-widest">
+                    Enter Tool <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                </div>
+            </a>
+
+            <a href="/admin/session-results/{{ session_id }}" class="action-card p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm hover:shadow-xl transition group border-indigo-100 bg-indigo-50/10">
+                <div class="h-14 w-14 bg-slate-900 rounded-2xl flex items-center justify-center text-2xl mb-6 shadow-lg shadow-slate-200">🏆</div>
+                <h3 class="font-black text-xl text-slate-900">Merit Leaderboard</h3>
+                <p class="text-sm text-slate-500 mt-2 leading-relaxed">View ranked results, check proctoring flags, and export Master ZIP.</p>
+                <div class="mt-8 flex items-center text-indigo-600 font-bold text-xs uppercase tracking-widest group-hover:translate-x-2 transition-transform">
+                    View Standings <span class="ml-2">→</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="mt-12 bg-slate-900 p-10 rounded-[3rem] text-white shadow-2xl shadow-slate-200">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h3 class="text-xl font-black">Live Job Description</h3>
+                    <p class="text-slate-400 text-xs mt-1">Updates reflect in both Screening and Test Generation.</p>
+                </div>
+                <div class="h-10 w-10 bg-white/10 rounded-xl flex items-center justify-center text-lg">📝</div>
+            </div>
+
+            <textarea id="live-jd"
+                      class="w-full bg-slate-800 p-6 rounded-2xl text-sm leading-relaxed text-slate-300 border-2 border-transparent focus:border-indigo-500 outline-none h-64 transition-all"
+                      placeholder="Enter job requirements...">{{ data.jd_text }}</textarea>
+
+            <div class="flex justify-end mt-6">
+                <button onclick="updateJD()" id="saveBtn" class="px-10 py-4 bg-indigo-600 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-900/20">
+                    Save JD Updates
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function updateJD() {
+            const btn = document.getElementById('saveBtn');
+            const jdContent = document.getElementById('live-jd').value;
+            btn.innerText = "Syncing with Cloud...";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/update-session-jd', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: "{{ session_id }}",
+                        new_jd: jdContent
+                    })
+                });
+
+                if (response.ok) {
+                    btn.innerText = "JD Updated Successfully ✓";
+                    btn.classList.replace('bg-indigo-600', 'bg-emerald-500');
+                    setTimeout(() => {
+                        btn.innerText = "Save JD Updates";
+                        btn.classList.replace('bg-emerald-500', 'bg-indigo-600');
+                        btn.disabled = false;
+                    }, 2000);
+                } else { throw new Error("Update failed"); }
+            } catch (err) {
+                alert("Failed to update JD.");
+                btn.innerText = "Retry Save";
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

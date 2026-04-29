@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HirePilot | Document Vault Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfcfd; }
+        .vault-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #f1f5f9; }
+        .vault-card:hover { transform: translateY(-5px); border-color: #6366f1; box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.1); }
+    </style>
+</head>
+<body class="p-8 md:p-12">
+
+    <header class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-6">
+        <div>
+            <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">Onboarding Vault</h1>
+            <p class="text-slate-500 font-medium mt-2">Batch 2026 Compliance | Session <span class="text-indigo-600 font-black">#{{ session_id }}</span></p>
+        </div>
+        <div class="flex gap-4">
+            <a href="/admin/home" class="px-6 py-3 bg-white border border-slate-200 rounded-2xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition">← Back to Dashboard</a>
+            <a href="/admin/document-setup/{{ session_id }}" class="px-6 py-3 bg-slate-900 text-white rounded-2xl text-xs font-bold hover:bg-indigo-600 transition shadow-lg shadow-indigo-100">⚙️ Requirements Setup</a>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+        {% for cand in candidates %}
+        <div class="vault-card bg-white rounded-[3rem] p-10 flex flex-col h-full group">
+
+            <div class="flex justify-between items-start mb-10">
+                <div class="max-w-[70%]">
+                    <h4 class="text-xl font-black text-slate-900 truncate">{{ cand.name }}</h4>
+                    <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1">{{ cand.email }}</p>
+                </div>
+                <span class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest
+                    {{ 'bg-emerald-100 text-emerald-700' if cand.doc_status == 'Uploaded' else 'bg-slate-100 text-slate-400' }}">
+                    {{ cand.doc_status | default('Pending') }}
+                </span>
+            </div>
+
+            <div class="space-y-4 flex-grow">
+                <h5 class="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] mb-2">Category Breakdown</h5>
+                {% if cand.documents %}
+                    {% for doc_name, paths in cand.documents.items() %}
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 flex justify-between items-center group/item hover:bg-white hover:shadow-md transition-all">
+                        <div class="overflow-hidden">
+                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] mb-1">{{ doc_name }}</p>
+                            <p class="text-xs font-bold text-slate-700 truncate">
+                                {{ paths|length }} file(s) submitted
+                            </p>
+                        </div>
+
+                        <a href="/api/download-docs/{{ session_id }}/{{ cand.id }}/{{ doc_name }}"
+                           title="Download Category"
+                           class="h-10 w-10 flex items-center justify-center bg-white rounded-xl shadow-sm border border-slate-100 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                            </svg>
+                        </a>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="py-16 text-center border-2 border-dashed border-slate-50 rounded-[2rem]">
+                        <p class="text-xs text-slate-300 font-bold italic">No files submitted for Batch 2026 drive.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if cand.documents %}
+            <div class="mt-8 pt-8 border-t border-slate-50">
+                <a href="/api/download-all-candidate-docs/{{ session_id }}/{{ cand.id }}"
+                   class="w-full flex items-center justify-center gap-3 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-100">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                    </svg>
+                    Download Master Archive
+                </a>
+            </div>
+            {% endif %}
+
+            <div class="mt-4 flex justify-center">
+                <p class="text-[9px] text-slate-300 font-bold uppercase tracking-widest">ID: {{ cand.id }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</body>
+</html>

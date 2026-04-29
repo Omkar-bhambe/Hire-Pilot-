@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Interview</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js"></script>
+
+    <style>
+      body {
+        font-family: Arial;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        margin: 0;
+        color: white;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: white;
+        color: black;
+        padding: 25px;
+        border-radius: 15px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .timer {
+        background: red;
+        padding: 8px 12px;
+        border-radius: 8px;
+      }
+
+      .question {
+        margin: 20px 0;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .answerBox {
+        background: #f1f1f1;
+        padding: 15px;
+        border-radius: 10px;
+        min-height: 80px;
+      }
+
+      button {
+        padding: 10px 15px;
+        margin-top: 10px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 8px;
+      }
+
+      .warning {
+        color: red;
+      }
+
+      video {
+        margin-top: 10px;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="header">
+        <h2>🎤 AI Interview</h2>
+        <div class="timer" id="timer">30:00</div>
+      </div>
+
+      <div id="statusBox"></div>
+
+      <div class="question" id="questionBox">Loading...</div>
+
+      <h4>🎙️ Your Answer (Live)</h4>
+      <div class="answerBox" id="answerBox">Start speaking...</div>
+
+      <button onclick="startListening()">🎤 Start Speaking</button>
+
+      <p id="micStatus"></p>
+
+      <div class="warning" id="warningBox"></div>
+
+      <h4>🎥 Camera Monitoring</h4>
+      <video
+        id="video"
+        width="300"
+        height="200"
+        autoplay
+        muted
+        playsinline
+      ></video>
+    </div>
+
+    <script>
+      const interviewId = "{{ interview_id }}";
+      let warnings = 0;
+      let timeLeft = 1800;
+      let finalAnswer = "";
+      let interviewStarted = false;
+
+      // ================= TIMER =================
+      function startTimer() {
+        const timerInterval = setInterval(() => {
+          if (!interviewStarted) return;
+
+          timeLeft--;
+
+          let min = Math.floor(timeLeft / 60);
+          let sec = timeLeft % 60;
+
+          document.getElementById("timer").innerText =
+            `${min}:${sec < 10 ? "0" : ""}${sec}`;
+
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            autoSubmit();
+          }
+        }, 1000);
+      }
+      // ================= VOICE =================
+      async function speak(text) {
+        try {
+          const res = await fetch("/api/voice/speak", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text }),
+          });
+
+          const data = await res.json();
+
+          if (data.audio_url) {
+            const audio = new Audio(data.audio_url + "?t=" + Date.now());
+            audio.play();
+          }
+        } catch (e) {
+          console.log("Voice error:", e);
+        }
+      }
+
+      // ================= WARNING =================
+      function warn(msg) {
+        warnings++;
+
+        document.getElementById("warningBox").innerText =
+          `⚠️ ${msg} (${warnings}/3)`;
+
+        console.log("⚠️ Warning:", msg);
+
+        if (warnings >= 3) {
+          alert("❌ Interview terminated due to cheating");
+          autoSubmit();
+        }
+      }
+
+      // ================= TAB SWITCH =================
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) warn("Tab switched");
+      });
+
+      // ================= CAMERA =================
+      async function startCamera() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+          });
+          document.getElementById("video").srcObject = stream;
+        } catch (e) {
+          alert("❌ Camera permission required");
+        }
+      }
+
+      // ================= FACE =================
+      async function loadModels() {
+        await faceapi.nets.tinyFaceDetector.loadFromUri(
+          "https://cdn.jsdelivr.net/npm/face-api.js/models",
+        );
+      }
+
+      function detectFaces() {
+        const video = document.getElementById("video");
+
+        setInterval(async () => {
+          // 🔥 IMPORTANT: wait until video is ready
+          if (!video || video.readyState < 2) return;
+
+          try {
+            const detections = await faceapi.detectAllFaces(
+              video,
+              new faceapi.TinyFaceDetectorOptions(),
+            );
+
+            console.log("Faces detected:", detections.length);
+
+            // 🔥 MULTIPLE FACE
+            if (detections.length > 1) {
+              warn("Multiple faces detected");
+            }
+
+            // 🔥 NO FACE (optional but good)
+            if (detections.length === 0) {
+              warn("No face detected");
+            }
+          } catch (err) {
+            console.log("Face detection error:", err);
+          }
+        }, 3000);
+      }
+
+      // ================= LOAD =================
+      async function loadQuestion() {
+        try {
+          const res = await fetch(`/api/interview/${interviewId}`);
+          const data = await res.json();
+
+          console.log("API Response:", data); // 🔥 DEBUG
+
+          // BEFORE TIME
+          if (data.status === "not_started") {
+            document.getElementById("statusBox").innerHTML =
+              `<h3>⏳ Interview not started yet</h3>
+         <p>${data.schedule_time}</p>`;
+            return;
+          }
+
+          // EXPIRED
+          if (data.status === "expired") {
+            document.body.innerHTML = "<h2>❌ Interview Expired</h2>";
+            return;
+          }
+
+          // 🔥 IMPORTANT FIX
+          if (data.status === "active" && data.current_question) {
+            interviewStarted = true;
+
+            document.getElementById("questionBox").innerText =
+              data.current_question;
+
+            speak(data.current_question);
+          } else {
+            console.log("⚠️ Question missing in response");
+          }
+        } catch (err) {
+          console.log("Load error:", err);
+        }
+      }
+
+      // ================= AUTO REFRESH =================
+      function startInterviewWatcher() {
+        setInterval(async () => {
+          try {
+            const res = await fetch(`/api/interview/${interviewId}`);
+            const data = await res.json();
+
+            console.log("🔄 Refresh:", data);
+
+            if (data.status === "active" && data.current_question) {
+              if (!interviewStarted) {
+                interviewStarted = true;
+                startTimer();
+              }
+
+              // 🔥 Only update if different question
+              if (questionBox.innerText !== data.current_question) {
+                questionBox.innerText = data.current_question;
+                speak(data.current_question);
+              }
+            }
+          } catch (e) {
+            console.log("Watcher error:", e);
+          }
+        }, 5000); // every 5 sec
+      }
+
+      // ================= SPEECH =================
+      let recognition;
+
+      function startListening() {
+        if (!("webkitSpeechRecognition" in window)) {
+          alert("Speech not supported");
+          return;
+        }
+
+        finalAnswer = "";
+        answerBox.innerText = "";
+
+        recognition = new webkitSpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.continuous = true;
+
+        micStatus.innerText = "🎙️ Listening...";
+        recognition.start();
+
+        recognition.onresult = function (event) {
+          let transcript = "";
+
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+          }
+
+          finalAnswer = transcript;
+          answerBox.innerText = transcript;
+        };
+
+        setTimeout(() => {
+          recognition.stop();
+          micStatus.innerText = "✅ Answer captured";
+          submitAnswer();
+        }, 8000);
+      }
+
+      // ================= SUBMIT =================
+      async function submitAnswer() {
+        const q = questionBox.innerText;
+
+        const res = await fetch(`/api/interview/${interviewId}/answer`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            question: q,
+            answer: finalAnswer,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (data.completed) {
+          autoSubmit();
+        } else {
+          questionBox.innerText = "Thinking... 🤖";
+
+          setTimeout(() => {
+            questionBox.innerText = data.next_question;
+            speak(data.next_question);
+          }, 1500);
+        }
+      }
+
+      // ================= COMPLETE =================
+      async function autoSubmit() {
+        await fetch(`/api/interview/${interviewId}/complete`, {
+          method: "POST",
+        });
+
+        document.body.innerHTML = "<h2>✅ Interview Completed</h2>";
+      }
+
+      // ================= INIT =================
+      async function init() {
+        await startCamera(); // 1️⃣ camera
+        await loadModels(); // 2️⃣ models
+        detectFaces(); // 3️⃣ proctoring
+
+        await loadQuestion(); // 4️⃣ first load
+
+        startInterviewWatcher(); // 🔥 NEW (IMPORTANT)
+      }
+
+      init();
+    </script>
+  </body>
+</html>

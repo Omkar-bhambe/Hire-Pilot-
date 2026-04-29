@@ -1,0 +1,11 @@
+Flask
+flask-cors
+pydantic
+google-generativeai
+google-cloud-firestore
+fpdf
+PyMuPDF
+python-dotenv
+werkzeug
+gunicorn
+python-docx

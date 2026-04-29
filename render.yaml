@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: hirepilot-backend
+    env: python
+    # We specify the build command to install the backend requirements
+    buildCommand: "pip install -r backend/requirements.txt"
+    # We use gunicorn with geventwebsocket to run the Flask-SocketIO app
+    startCommand: "cd backend && gunicorn -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 main:app"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      # You can add other environment variables here, or set them in the Render Dashboard
+      # - key: SECRET_KEY
+      #   generateValue: true

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HirePilot | HR Admin Portal</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23818cf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 19l9 2-9-18-9 18 9-2zm0 0v-8' /></svg>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root { --hp-nvy: #0f172a; --hp-blue: #2563eb; }
+        body { background-color: #f8fafc; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .sidebar { background: var(--hp-navy); min-height: 100vh; color: white; transition: 0.3s; }
+        .nav-link { color: rgba(255,255,255,0.7); border-radius: 8px; margin-bottom: 5px; }
+        .nav-link.active, .nav-link:hover { color: white; background: rgba(255,255,255,0.1); }
+        .glass-card { background: white; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .btn-primary { background-color: var(--hp-blue); border: none; padding: 12px 24px; border-radius: 10px; font-weight: 600; }
+        .upload-zone { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .upload-zone:hover { border-color: var(--hp-blue); background: #eff6ff; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 sidebar d-none d-md-block">
+            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-4 text-white min-vh-100">
+                <a href="/hr" class="d-flex align-items-center pb-5 mb-md-0 me-md-auto text-white text-decoration-none">
+                    <span class="fs-4 fw-bold">HirePilot<span class="text-primary">.</span></span>
+                </a>
+                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100" id="menu">
+                    <li class="w-100"><a href="#" class="nav-link active"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
+                    <li class="w-100"><a href="#" class="nav-link"><i class="bi bi-people me-2"></i> Candidates</a></li>
+                    <li class="w-100"><a href="#" class="nav-link"><i class="bi bi-briefcase me-2"></i> Active Roles</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col py-3 px-4">
+            <header class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <h2 class="fw-bold text-slate-800">One-Tap Recruitment Pipeline</h2>
+                    <p class="text-muted small">Phase 0 & 1: Initialization & ATS Screening</p>
+                </div>
+                <div class="dropdown">
+                    <button class="btn glass-card dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle me-2"></i> Admin HR
+                    </button>
+                </div>
+            </header>
+
+            <form id="oneTapForm" enctype="multipart/form-data">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="glass-card p-4 h-100">
+                            <h5 class="fw-bold mb-4">1. Define Role Requirements</h5>
+
+                            <ul class="nav nav-tabs mb-3" id="reqTabs" role="tablist">
+                                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#promptTab">AI Prompt</button></li>
+                                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#docTab">Document</button></li>
+                                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#manualTab">Manual</button></li>
+                            </ul>
+
+                            <div class="tab-content" id="reqTabsContent">
+                                <div class="tab-pane fade show active" id="promptTab">
+                                    <textarea class="form-control" name="jd_text" rows="8" placeholder="e.g., 'Looking for a Senior Python Dev with 5 years experience in Flask and Azure...'"></textarea>
+                                </div>
+                                <div class="tab-pane fade" id="docTab">
+                                    <div class="upload-zone"><i class="bi bi-file-earmark-text fs-1"></i><p>Upload Job Description (PDF/DOCX)</p></div>
+                                </div>
+                                <div class="tab-pane fade" id="manualTab">
+                                    <input type="text" class="form-control mb-2" placeholder="Job Title">
+                                    <textarea class="form-control" rows="5" placeholder="Key Skills Required"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="glass-card p-4 h-100">
+                            <h5 class="fw-bold mb-4">2. Candidate Data Uploadation</h5>
+                            <div class="upload-zone mb-4" onclick="document.getElementById('resumes').click()">
+                                <i class="bi bi-cloud-arrow-up fs-1 text-primary"></i>
+                                <h6 class="mt-2">Bulk Upload Resumes</h6>
+                                <p class="text-muted small">Select multiple PDF files to process in parallel</p>
+                                <input type="file" id="resumes" name="resumes" multiple hidden>
+                            </div>
+
+                            <div class="bg-light p-3 rounded-3 d-flex justify-content-between align-items-center">
+                                <span class="small fw-bold">Shortlist Bar (ATS Score):</span>
+                                <input type="range" class="form-range w-50" min="0" max="100" value="75">
+                                <span class="badge bg-primary">75+</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 text-center">
+                    <button type="submit" class="btn btn-primary btn-lg shadow-sm w-100 py-3">
+                        <i class="bi bi-lightning-charge-fill me-2"></i> Execute One-Tap Screening
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
+    async function startOneTapProcess() {
+    const formData = new FormData();
+    const resumes = document.getElementById('resumes').files;
+
+    formData.append('jd_text', document.querySelector('textarea[name="jd_text"]').value);
+    formData.append('threshold', document.querySelector('input[type="range"]').value);
+
+    for (let i = 0; i < resumes.length; i++) {
+        formData.append('resumes', resumes[i]);
+    }
+
+    // Show loading state
+    document.getElementById('results-dashboard').classList.remove('hidden');
+
+    const response = await fetch('/api/one-tap-process', {
+        method: 'POST',
+        body: formData
+    });
+
+    const result = await response.json();
+    populateDashboard(result.candidates);
+}
+
+function populateDashboard(candidates) {
+    const tbody = document.querySelector('#results-table tbody');
+    tbody.innerHTML = ''; // Clear previous
+
+    candidates.forEach(c => {
+        const row = `
+            <tr class="border-b">
+                <td class="px-6 py-4 font-medium">${c.name}</td>
+                <td class="px-6 py-4">${c.score}/100</td>
+                <td class="px-6 py-4">${c.status}</td>
+                <td class="px-6 py-4 text-sm text-muted">${c.summary}</td>
+            </tr>`;
+        tbody.insertAdjacentHTML('beforeend', row);
+    });
+}
+</script>
+</body>
+</html>

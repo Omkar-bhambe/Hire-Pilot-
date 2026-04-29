@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HirePilot AI Resume Screener</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23818cf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 19l9 2-9-18-9 18 9-2zm0 0v-8' /></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfcfd; }
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #f2f4f7; }
+        .sidebar-item:hover { background-color: #f9fafb; transition: all 0.2s; }
+        .init-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .init-card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
+        .active-nav { background-color: #f5f3ff; color: #4f46e5 !important; border-right: 3px solid #4f46e5; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <aside class="w-72 bg-white border-r border-slate-100 flex flex-col z-20">
+        <div class="p-8">
+            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tighter">HirePilot<span class="text-indigo-600">.</span></h1>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1">Agentic AI Resume Parser</p>
+        </div>
+
+        <nav class="flex-grow px-4 space-y-1">
+            <a href="/admin" class="sidebar-item flex items-center space-x-3 p-3 rounded-xl text-slate-500 font-semibold">
+                <span>📊</span> <span>Dashboard</span>
+            </a>
+            <a href="/history" class="sidebar-item flex items-center space-x-3 p-3 rounded-xl text-slate-500 font-semibold">
+                <span>📂</span> <span>Recruitment History</span>
+            </a>
+            <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-xl text-slate-500 font-semibold">
+                <span>📧</span> <span>Email Logs</span>
+            </a>
+            <a href="/index" class="active-nav flex items-center space-x-3 p-3 rounded-xl text-indigo-700 font-bold">
+                <span class="flex-shrink-0 h-9 w-9 bg-indigo-600 rounded-xl flex items-center justify-center text-lg shadow-lg shadow-indigo-100 transition-transform group-hover:scale-110">
+            🔍
+        </span> <span class="tracking-tight">AI Resume Screening</span>
+            </a>
+        </nav>
+
+        <div class="p-6">
+            <div class="bg-indigo-600 rounded-2xl p-5 text-white shadow-lg shadow-indigo-100">
+                <p class="text-[10px] font-black uppercase opacity-70 tracking-widest">Active Batch</p>
+                <p class="text-sm font-bold mt-1">Software Eng. 2026</p>
+                <div class="mt-4 h-1.5 w-full bg-indigo-400/30 rounded-full overflow-hidden">
+                    <div class="h-full bg-white w-2/3"></div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-grow flex flex-col overflow-y-auto">
+
+        <header class="glass-nav sticky top-0 px-10 py-6 flex justify-between items-center z-10">
+            <div>
+                <h2 class="text-xl font-extrabold text-slate-800">Initialize Screening</h2>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Select your processing methodology</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="text-right">
+                    <p class="text-xs font-bold text-slate-400">System Status</p>
+                    <p class="text-sm font-black text-green-500">Agent Online</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-10 max-w-7xl mx-auto w-full">
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Processed via AI</p>
+                    <h3 id="stat-ai-processed" class="text-3xl font-black text-slate-900 mt-2">--</h3>
+                </div>
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Bulk Uploads (ZIP)</p>
+                    <h3 id="stat-bulk-zip" class="text-3xl font-black text-indigo-600 mt-2">--</h3>
+                </div>
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Avg. Match Score</p>
+                    <h3 id="stat-avg-score" class="text-3xl font-black text-emerald-500 mt-2">--%</h3>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+
+                <div onclick="location.href='/init/prompt'" class="init-card bg-white p-8 rounded-[40px] border border-slate-100 cursor-pointer group">
+                    <div class="h-14 w-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-colors">💬</div>
+                    <h4 class="text-xl font-extrabold text-slate-900">AI Prompt</h4>
+                    <p class="text-sm text-slate-500 mt-3 leading-relaxed">Describe requirements conversationally. Gemini Agent extracts skills and matches candidates instantly.</p>
+                    <div class="mt-8 flex items-center text-indigo-600 font-bold text-xs uppercase tracking-widest">
+                        Initialize Agent <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                    </div>
+                </div>
+
+                <div onclick="location.href='/init/document'" class="init-card bg-white p-8 rounded-[40px] border border-slate-100 cursor-pointer group">
+                    <div class="h-14 w-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:bg-emerald-600 group-hover:text-white transition-colors">📂</div>
+                    <h4 class="text-xl font-extrabold text-slate-900">Document Hub</h4>
+                    <p class="text-sm text-slate-500 mt-3 leading-relaxed">Upload structured JD documents and bulk resume ZIPs. Ideal for high-volume enterprise hiring.</p>
+                    <div class="mt-8 flex items-center text-emerald-600 font-bold text-xs uppercase tracking-widest">
+                        Bulk Processing <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                    </div>
+                </div>
+
+                <div onclick="location.href='/init/manual'" class="init-card bg-white p-8 rounded-[40px] border border-slate-100 cursor-pointer group">
+                    <div class="h-14 w-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:bg-amber-600 group-hover:text-white transition-colors">✍️</div>
+                    <h4 class="text-xl font-extrabold text-slate-900">Manual Entry</h4>
+                    <p class="text-sm text-slate-500 mt-3 leading-relaxed">Strict administrative control. Manually input candidate parameters for precision screening.</p>
+                    <div class="mt-8 flex items-center text-amber-600 font-bold text-xs uppercase tracking-widest">
+                        Direct Input <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        async function loadGatewayStats() {
+            try {
+                const response = await fetch('/api/gateway-stats');
+                const stats = await response.json();
+
+                document.getElementById('stat-ai-processed').innerText = stats.ai_processed.toLocaleString();
+                document.getElementById('stat-bulk-zip').innerText = stats.bulk_zip_count;
+                document.getElementById('stat-avg-score').innerText = stats.avg_score + "%";
+            } catch (error) {
+                console.error("Failed to load gateway metrics:", error);
+            }
+        }
+        loadGatewayStats();
+    </script>
+</body>
+</html>

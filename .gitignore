@@ -1,0 +1,17 @@
+.env
+.venv
+new_venv
+__pycache__/
+*.pyc
+logs/
+uploads/
+firebase-key.json
+backend/.env
+backend/venv
+backend/__pycache__/
+backend/logs/
+backend/uploads/
+backend/alembic/
+*.db
+.idea/
+.DS_Store

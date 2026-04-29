@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HirePilot | Permission Granted</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-50 h-screen flex items-center justify-center p-6 font-['Plus_Jakarta_Sans']">
+    <div class="max-w-md w-full bg-white p-12 rounded-[40px] shadow-2xl text-center border border-slate-100">
+        <div class="h-20 w-20 bg-emerald-100 text-emerald-600 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-8">
+            ✅
+        </div>
+        <h1 class="text-3xl font-black text-slate-900 mb-4">Access Granted</h1>
+        <p class="text-slate-500 text-sm leading-relaxed mb-8">
+            The credentials for <strong>{{ user }}</strong> have been securely transferred to the Cloud. They can now access the HirePilot Dashboard.
+        </p>
+        <a href="/login" class="inline-block bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold hover:bg-indigo-600 transition">
+            Return to Dashboard
+        </a>
+    </div>
+</body>
+</html>

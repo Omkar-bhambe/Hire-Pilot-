@@ -1,0 +1,104 @@
+{
+  "interview_id": "interview_1770833681",
+  "full_name": "Anurag Sandbhor",
+  "email": "rahsg@gmail.com",
+  "job_description": "I want to completely redesign and replace my current Interview page UI.\r\n\r\nRecreate the interface exactly like this design:\r\n\r\nLayout Requirements:\r\n\r\n1. Top Navigation Bar (Full Width)\r\n   - Left: \"AI Interview Session\"\r\n   - Center: Timer (e.g., Time: 08:25)\r\n   - Right:\r\n        - Warning counter (Warnings: 1 / 3)\r\n        - Webcam status (Webcam: ON)\r\n        - Notification + Camera icons\r\n   - Soft blue background\r\n   - Clean, minimal, rounded UI\r\n\r\n2. Main Content Layout (2-column layout)\r\n\r\nLEFT SIDE (Main Interview Area):\r\n\r\nA. Interviewer Section\r\n   - Circular friendly interviewer avatar (female AI avatar with headset)\r\n   - Speech bubble message:\r\n        \"That's a great answer, thank you!\r\n         Let's dive into the next question.\"\r\n   - Soft shadow container\r\n   - Rounded corners\r\n\r\nB. Question Card\r\n   - Large highlighted card\r\n   - Light yellow background\r\n   - Question text:\r\n     \"Can you tell me about a challenging project you worked on?\"\r\n   - Arrow icon on left\r\n   - Slight elevation effect\r\n\r\nC. Listening + Transcription Section\r\n   - \"Listening...\" indicator with mic icon\r\n   - Divider line\r\n   - Live transcription box:\r\n     \u201cWell, in my last job, I led a team to redesign our company\u2019s\u2026\u201d\r\n\r\nD. Control Panel (Bottom)\r\n   - Left: Mic icon + \"Mute\"\r\n   - Center: Large blue \"Stop Answering\" button\r\n   - Right: Volume slider with speaker icon\r\n   - Rounded container\r\n   - Soft shadow\r\n\r\nRIGHT SIDE (Webcam Panel):\r\n\r\n- Candidate webcam preview\r\n- Rounded rectangle\r\n- Bottom overlay label:\r\n     \"Face Detected \u2713\"\r\n- Soft dark overlay behind text\r\n\r\nBOTTOM FOOTER:\r\n- \"Need Help? Interview Rules\"\r\n- \"Interviewer Mode: Friendly \ud83d\ude0a\"\r\n\r\nTechnical Requirements:\r\n\r\n- Use React functional components\r\n- Use Tailwind CSS\r\n- Fully responsive\r\n- Clean modern UI\r\n- Rounded corners everywhere (rounded-xl or rounded-2xl)\r\n- Soft shadows (shadow-md or shadow-lg)\r\n- Use flex and grid properly\r\n- Do not remove existing logic (timer, warnings, webcam state)\r\n- Only redesign UI layout and structure\r\n- Keep state and hooks intact\r\n\r\nCreate reusable components if needed:\r\n- InterviewHeader\r\n- InterviewerAvatar\r\n- QuestionCard\r\n- WebcamPanel\r\n- ControlPanel\r\n- FooterInfo\r\n\r\nMake it production ready and clean.\r\nDo not include placeholder comments.\r\nGenerate full JSX code.\r\n",
+  "resume_text": "Anurag Sandbho r \nPune , India  \n +91 8010148597      Portfolio  \nEducation  \nIndira College of Engineering and Management , Pune  Nov  2022 \u2013 May  2026 \nBachelor  of Engineering  in Artificial Intelligence and Data Science   \nExperience  \nTripify   Sep 2025 \u2013 Present  \nAI Agent Developer Intern  \n\u2022 Built intelligent AI agents capable of performing multi -step tasks through advanced reasoning and dynamic tool usage.  \n\u2022 Connected multiple APIs and vector databases to improve the agents\u2019 memory, contextual understanding, and user personalizatio n. \n\u2022 Developed automation workflows using LangGraph and LangChain to enable smooth and scalable agent operations.  \n\u2022 Worked closely with the backend team to fine -tune response times and ensure seamless integration within Tripify\u2019s travel platform.  \n  \nDecloud Labs  Jan 2025  \u2013 Jun 2025  \nArtificial Intelligence Intern   \n\u2022 Engineered end -to-end AI pipelines using LangChain for retrieval -augmented generation (RAG) systems.   \n\u2022 Integrated vector databases with LLMs to improve context -aware question answering and document search.  \n\u2022 Fine -tuned and evaluated LLMs for domain -specific tasks, enhancing model accuracy and response relevance.  \n\u2022 Collaborated on building chatbot assistants that interact with user -uploaded files and external sources using prompt engineering.  \n\u2022 Documented workflows and optimized performance, ensuring modular, scalable, and production -ready AI components . \n    21 Spheres                                                                                                                                                                                       Dec 2024 - Jan 2025  \n   Computer Vision Intern  \n\u2022 Developed a real -time object detection system using YOLO with optimized speed and accuracy.  \n\u2022 Applied advanced preprocessing techniques to enhance image quality in dynamic environments.  \n\u2022 Streamlined image processing workflows using GPU acceleration for improved performance.  \n\u2022 Refined the model thorough testing to ensure reliable and consistent object recognition . \nProjects  \nAquaNav  | Python , MYSQL   \n\u2022 Developed an AI -based system that uses the D* Lite algorithm to dynamically plan and re -route ocean navigation paths in real time.  \n\u2022 Incorporated real -time environmental and geographical data like weather, sea currents, and terrain to improve route efficiency, safety, \nand reduce fuel usage.  \n\u2022 Applied advanced concepts in graph theory and pathfinding to solve complex maritime routing challenges.  \n\u2022 Built a responsive decision -making system capable of adapting to sudden changes during a vessel's journey.  \n \nCancer Detection System  | Python , Numpy, Pandas, Sklearn                                                                                                                 Code    \n\u2022 Utilized the Wisconsin Breast Cancer dataset to develop a machine learning model for tumor classification.  \n\u2022 Conducted data preprocessing, feature selection, and model training using algorithms like Random Forest and SVM.  \n\u2022 Achieved a classification accuracy of 95%, demonstrating strong predictive performance on unseen data.  \n\u2022 Enhanced early detection capabilities, contributing to faster and more reliable breast cancer  diagnostics  \n \nTechnical  Skills  \n Languages :   Python,  SQL, HTML  \nTechnologies/Frameworks :  Pandas, NumPy,  OpenCV, scikit -learn, LangChain, TensorFlow,  PyTorch , Matplotlib,  Seaborn , \nTensorflow  \nRelated Course Work :, Problem Solving, Machine Learning, Deep Learning , Data Science , Computer vision, Data Processing , Natural \nLanguage Processing , Artificial Neural Network  \nTools : Github,  Jupyter Notebook , Power BI            \nCertifications  \n Power   BI                                                                                                                                                                                                                                   Link                                                                   \n Business Analysis and Process Managemen t                                                                                                                                                                                        Link \n Data Analytics and Visualization                             Link \n Google Cloud Computing                       Link      \n Fundamental Of Gen AI                      Link \n GenAI for Business Intelligence Analysts                                                                                                                                                                                                Link \nanuragsandbhor1111@gmail.com  \n LinkedIn  \n Github  ",
+  "personality": "friendly",
+  "created_at": "2026-02-11T23:44:41.717759",
+  "status": "auto_submitted",
+  "questions": [
+    {
+      "text": "Tell us about your experience with Python",
+      "category": "experience",
+      "difficulty": "easy"
+    },
+    {
+      "text": "Describe a challenging project you worked on",
+      "category": "behavioral",
+      "difficulty": "medium"
+    },
+    {
+      "text": "How would you handle a system design problem?",
+      "category": "technical",
+      "difficulty": "hard"
+    },
+    {
+      "text": "What would you do if faced with a tight deadline?",
+      "category": "situational",
+      "difficulty": "medium"
+    },
+    {
+      "text": "How do you approach problem solving?",
+      "category": "problem_solving",
+      "difficulty": "medium"
+    },
+    {
+      "text": "Tell us about your AI/Integration experience",
+      "category": "technical",
+      "difficulty": "hard"
+    },
+    {
+      "text": "Describe your approach to learning new technologies",
+      "category": "behavioral",
+      "difficulty": "easy"
+    },
+    {
+      "text": "How do you handle code review feedback?",
+      "category": "behavioral",
+      "difficulty": "medium"
+    },
+    {
+      "text": "What is your experience with deployment and DevOps?",
+      "category": "experience",
+      "difficulty": "medium"
+    },
+    {
+      "text": "How do you ensure code quality in your projects?",
+      "category": "problem_solving",
+      "difficulty": "hard"
+    }
+  ],
+  "answers": [],
+  "violations": [
+    {
+      "type": "suspicious_activity",
+      "details": "",
+      "timestamp": "2026-02-11T23:45:10.264670"
+    },
+    {
+      "type": "suspicious_activity",
+      "details": "",
+      "timestamp": "2026-02-11T23:45:10.338762"
+    },
+    {
+      "type": "suspicious_activity",
+      "details": "",
+      "timestamp": "2026-02-11T23:45:14.651642"
+    },
+    {
+      "type": "suspicious_activity",
+      "details": "",
+      "timestamp": "2026-02-11T23:45:15.118203"
+    },
+    {
+      "type": "suspicious_activity",
+      "details": "",
+      "timestamp": "2026-02-11T23:45:20.239208"
+    },
+    {
+      "type": "suspicious_activity",
+      "details": "",
+      "timestamp": "2026-02-11T23:45:21.408983"
+    }
+  ],
+  "warnings": 6,
+  "category_distribution": {
+    "technical": 2,
+    "behavioral": 3,
+    "situational": 1,
+    "problem_solving": 2,
+    "experience": 2
+  },
+  "completed_at": "2026-02-11T23:45:21.409002"
+}

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HirePilot Admin | Command Center</title>
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23818cf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 19l9 2-9-18-9 18 9-2zm0 0v-8' /></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fcfcfd;
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #f2f4f7;
+        }
+
+        .sidebar-item:hover {
+            background-color: #f9fafb;
+            transition: all 0.2s;
+        }
+
+        .action-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-height: 260px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        .create-btn {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+    </style>
+</head>
+
+<body class="flex h-screen overflow-hidden">
+
+    <aside class="w-72 bg-white border-r border-slate-100 flex flex-col z-20">
+        <div class="p-8">
+            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tighter">HirePilot<span
+                    class="text-indigo-600">.</span></h1>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1">Admin Command Center</p>
+        </div>
+
+        <nav class="flex-grow px-4 space-y-1">
+            <a href="/admin/create-session"
+                class="create-btn flex items-center justify-center space-x-2 p-4 mb-6 rounded-2xl text-white font-bold shadow-lg shadow-indigo-100 hover:scale-[1.02] transition-all">
+                <span class="text-xl">+</span> <span>New Recruitment Session</span>
+            </a>
+
+            <a href="/admin/home"
+                class="flex items-center space-x-3 p-3 rounded-xl bg-indigo-50 text-indigo-700 font-bold">
+                <span>📊</span> <span>Dashboard</span>
+            </a>
+            <button onclick="navigateSafe('/admin/test-manager')"
+                class="w-full sidebar-item flex items-center space-x-3 p-3 rounded-xl text-slate-500 font-semibold hover:text-indigo-600 transition text-left">
+                <span>⚡</span> <span>Assessment Center</span>
+            </button>
+            <button onclick="navigateSafe('/admin/document-manager')"
+                class="w-full sidebar-item flex items-center space-x-3 p-3 rounded-xl text-slate-500 font-semibold hover:text-indigo-600 transition text-left">
+                <span>📂</span> <span>Document Hub</span>
+            </button>
+            <a href="/history"
+                class="sidebar-item flex items-center space-x-3 p-3 rounded-xl text-slate-500 font-semibold">
+                <span>📁</span> <span>Recruitment History</span>
+            </a>
+            <a href="#" class="sidebar-item flex items-center space-x-3 p-3 rounded-xl text-slate-500 font-semibold">
+                <span>📧</span> <span>Email Logs</span>
+            </a>
+        </nav>
+
+        <div class="p-6 mt-auto">
+            <div class="bg-slate-900 rounded-2xl p-4 text-white shadow-xl shadow-slate-200">
+                <p class="text-xs font-bold opacity-40 uppercase tracking-widest">Active Session</p>
+                <p class="text-[10px] font-mono mt-1 text-indigo-300 truncate">
+                    {{ session_id if session_id and session_id != "" and session_id != "no_active_session" else "None
+                    Active" }}
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-grow flex flex-col overflow-y-auto">
+        <header class="glass-nav sticky top-0 px-10 py-5 flex justify-between items-center z-10">
+            <h2 class="text-lg font-bold text-slate-800 tracking-tight">Welcome, Omkar Bhambe</h2>
+        </header>
+
+        <div class="p-10 max-w-7xl mx-auto w-full">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                    <p class="text-xs font-black text-slate-400 uppercase">Total Screened</p>
+                    <h3 id="stat-total-screened" class="text-3xl font-black text-slate-900 mt-2">--</h3>
+                </div>
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+                    <p class="text-xs font-black text-slate-400 uppercase">Shortlisted</p>
+                    <h3 id="stat-shortlisted" class="text-3xl font-black text-indigo-600 mt-2">--</h3>
+                </div>
+            </div>
+
+            <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.3em] mb-8">Recruitment Workflow</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+
+                <div onclick="location.href='/admin/create-session'"
+                    class="action-card bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm cursor-pointer group">
+                    <div>
+                        <div
+                            class="h-12 w-12 bg-slate-900 rounded-2xl flex items-center justify-center text-xl mb-6 shadow-lg shadow-slate-200">
+                            ➕</div>
+                        <h4 class="text-xl font-extrabold text-slate-900">Initialize Drive</h4>
+                        <p class="text-sm text-slate-500 mt-2">Set drive name, year, and upload JD to create a fresh
+                            cloud environment.</p>
+                    </div>
+                    <div class="mt-6 flex items-center text-indigo-600 font-bold text-sm">
+                        Start New Session <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                    </div>
+                </div>
+
+                <div onclick="location.href='/index'"
+                    class="action-card bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm cursor-pointer group">
+                    <div>
+                        <div
+                            class="h-12 w-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-xl mb-6 shadow-lg shadow-indigo-100">
+                            🔍</div>
+                        <h4 class="text-xl font-extrabold text-slate-900">AI Screening</h4>
+                        <p class="text-sm text-slate-500 mt-2">Bulk process resumes with Gemini. Scoring & Ranking.</p>
+                    </div>
+                    <div class="mt-6 flex items-center text-indigo-600 font-bold text-sm">
+                        Start Screening <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                    </div>
+                </div>
+
+                <div onclick="navigateSafe('/admin/test-manager')"
+                    class="action-card bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm cursor-pointer group">
+                    <div>
+                        <div
+                            class="h-12 w-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-xl mb-6 shadow-lg shadow-indigo-100">
+                            ⚡</div>
+                        <h4 class="text-xl font-extrabold text-slate-900">Assessment Center</h4>
+                        <p class="text-sm text-slate-500 mt-2">Generate and track 90-question technical & logical tests.
+                        </p>
+                    </div>
+                    <div class="mt-6 flex items-center text-indigo-600 font-bold text-sm">
+                        Manage Tests <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                    </div>
+                </div>
+
+                <div onclick="navigateSafe('/admin/document-manager')"
+                    class="action-card bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm cursor-pointer group">
+                    <div>
+                        <div
+                            class="h-12 w-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-xl mb-6 shadow-lg shadow-emerald-100">
+                            📄</div>
+                        <h4 class="text-xl font-extrabold text-slate-900">Document Hub</h4>
+                        <p class="text-sm text-slate-500 mt-2">Manage KYC, Marksheets, and verify submissions.</p>
+                    </div>
+                    <div class="mt-6 flex items-center text-emerald-600 font-bold text-sm">
+                        Review Uploads <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                    </div>
+                </div>
+
+                <div onclick="navigateSafe('/admin/session-results')"
+                    class="action-card bg-white p-8 rounded-[40px] border border-slate-100 shadow-sm cursor-pointer group">
+                    <div>
+                        <div
+                            class="h-12 w-12 bg-rose-500 rounded-2xl flex items-center justify-center text-xl mb-6 shadow-lg shadow-rose-100">
+                            🎥</div>
+                        <h4 class="text-xl font-extrabold text-slate-900">Virtual Interviews</h4>
+                        <p class="text-sm text-slate-500 mt-2">Schedule & host AI-assisted virtual video interviews.</p>
+                    </div>
+                    <div class="mt-6 flex items-center text-rose-600 font-bold text-sm">
+                        Manage Interviews <span class="ml-2 group-hover:translate-x-2 transition-transform">→</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="bg-white rounded-[40px] border border-slate-100 shadow-sm overflow-hidden">
+                <div class="p-8 border-b border-slate-50 flex justify-between items-center">
+                    <h4 class="text-lg font-extrabold text-slate-900">Recent AI Activity</h4>
+                    <button class="text-xs font-bold text-indigo-600 hover:underline">View All History</button>
+                </div>
+                <div id="activity-list" class="divide-y divide-slate-50">
+                    <div class="p-6 text-slate-400 text-xs italic">Syncing live logs...</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function navigateSafe(basePath) {
+            const s_id = "{{ session_id }}".trim();
+            if (!s_id || s_id === "" || s_id === "None" || s_id === "no_active_session") {
+                alert("⚠️ Error: No active session detected. Please click 'Initialize Drive' to start a new recruitment session first.");
+            } else {
+                location.href = `${basePath}/${s_id}`;
+            }
+        }
+
+        const currentSessionId = "{{ session_id }}";
+        async function refreshDashboardStats() {
+            if (!currentSessionId || currentSessionId === "no_active_session") return;
+            try {
+                const response = await fetch(`/api/admin-stats/${currentSessionId}`);
+                const stats = await response.json();
+                document.getElementById('stat-total-screened').innerText = stats.total_screened || 0;
+                document.getElementById('stat-shortlisted').innerText = stats.shortlisted || 0;
+            } catch (error) { console.error("Stats fetch failed:", error); }
+        }
+        refreshDashboardStats();
+    </script>
+</body>
+
+</html>

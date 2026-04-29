@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HirePilot | Candidate Document Verification</title>
+
+<style>
+* { box-sizing: border-box; font-family: "Segoe UI", Arial, sans-serif; }
+
+body { margin: 0; background: #f4f6f9; }
+
+.page { min-height: 100vh; padding: 40px; }
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+}
+
+h2 { color: #1e3c72; margin-bottom: 30px; }
+
+.section { margin-bottom: 35px; }
+
+label { font-weight: 600; margin-bottom: 8px; display:block; }
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+}
+
+.required { color:red; }
+
+.row {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.drop-zone {
+    flex: 1;
+    border: 2px dashed #1e3c72;
+    padding: 28px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 8px;
+    background: #f9fbff;
+}
+
+.drop-zone.dragover { background: #e6eeff; }
+
+.doc-info { flex: 1; }
+
+.file-name { font-size: 14px; margin-top:6px; }
+
+.progress {
+    width: 100%;
+    height: 8px;
+    background: #ddd;
+    border-radius: 5px;
+    margin-top: 6px;
+}
+
+.progress-bar {
+    height: 8px;
+    width: 0%;
+    background: #1e3c72;
+    border-radius: 5px;
+}
+
+.remove-btn {
+    margin-top: 6px;
+    background: #c0392b;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button {
+    background: #1e3c72;
+    color: white;
+    padding: 14px 30px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.message { margin-top: 20px; font-weight:600; }
+
+.hidden { display:none; }
+</style>
+</head>
+
+<body>
+
+<div class="page">
+<div class="container">
+
+<h2>HirePilot – Candidate Document Verification</h2>
+
+<form id="uploadForm">
+
+<label>Email ID <span class="required">*</span></label>
+<input type="email" required>
+
+<label>Candidate Type <span class="required">*</span></label>
+<select id="candidateType" required>
+<option value="">Select</option>
+<option value="fresher">Fresher</option>
+<option value="experienced">Experienced</option>
+</select>
+
+<!-- FRESHER DOCUMENTS -->
+<div id="fresherSection" class="section hidden">
+
+<h3>Mandatory Identity & Education Documents</h3>
+
+<div class="row">
+<div class="drop-zone">Drop Aadhaar PDF</div>
+<div class="doc-info">
+Aadhaar Card <span class="required">*</span>
+<div class="file-name"></div>
+<div class="progress"><div class="progress-bar"></div></div>
+<button type="button" class="remove-btn hidden">Remove</button>
+</div>
+<input type="file" accept="application/pdf" hidden required>
+</div>
+
+<div class="row">
+<div class="drop-zone">Drop PAN PDF</div>
+<div class="doc-info">
+PAN Card <span class="required">*</span>
+<div class="file-name"></div>
+<div class="progress"><div class="progress-bar"></div></div>
+<button type="button" class="remove-btn hidden">Remove</button>
+</div>
+<input type="file" accept="application/pdf" hidden required>
+</div>
+
+<div class="row">
+<div class="drop-zone">Drop Educational PDFs (Max 10)</div>
+<div class="doc-info">
+Educational Certificates <span class="required">*</span>
+<div class="file-name"></div>
+<div class="progress"><div class="progress-bar"></div></div>
+<button type="button" class="remove-btn hidden">Remove</button>
+</div>
+<input type="file" accept="application/pdf" multiple hidden required>
+</div>
+
+</div>
+
+<!-- EXPERIENCE -->
+<div id="experienceSection" class="section hidden">
+
+<h3>Past Employment Details</h3>
+
+<label>Previous Company <span class="required">*</span></label>
+<input type="text" required>
+
+<label>Designation <span class="required">*</span></label>
+<input type="text" required>
+
+<label>Employment Duration <span class="required">*</span></label>
+<input type="text" required>
+
+<label>UAN Number <span class="required">*</span></label>
+<input type="text" required>
+
+<div class="row">
+<div class="drop-zone">Drop Salary Proof PDF</div>
+<div class="doc-info">
+Salary Proof <span class="required">*</span>
+<div class="file-name"></div>
+<div class="progress"><div class="progress-bar"></div></div>
+<button type="button" class="remove-btn hidden">Remove</button>
+</div>
+<input type="file" accept="application/pdf" hidden required>
+</div>
+
+</div>
+
+<form action="/submit" method="POST" enctype="multipart/form-data">
+
+<button type="submit">Submit Documents</button>
+<div id="msg" class="message"></div>
+
+</form>
+</div>
+</div>
+
+<script>
+const typeSelect = document.getElementById("candidateType");
+const fresher = document.getElementById("fresherSection");
+const exp = document.getElementById("experienceSection");
+const msg = document.getElementById("msg");
+
+typeSelect.onchange = () => {
+    fresher.classList.remove("hidden");
+    if (typeSelect.value === "experienced") exp.classList.remove("hidden");
+    else exp.classList.add("hidden");
+    msg.innerText="";
+};
+
+document.querySelectorAll(".row").forEach(row => {
+
+const zone = row.querySelector(".drop-zone");
+const input = row.querySelector("input[type=file]");
+const bar = row.querySelector(".progress-bar");
+const fileName = row.querySelector(".file-name");
+const removeBtn = row.querySelector(".remove-btn");
+
+zone.onclick = () => input.click();
+
+zone.ondragover = e => { e.preventDefault(); zone.classList.add("dragover"); };
+zone.ondragleave = () => zone.classList.remove("dragover");
+
+zone.ondrop = e => {
+    e.preventDefault();
+    zone.classList.remove("dragover");
+    setFiles(e.dataTransfer.files);
+};
+
+input.onchange = () => setFiles(input.files);
+
+removeBtn.onclick = () => {
+    input.value="";
+    fileName.innerText="";
+    bar.style.width="0%";
+    removeBtn.classList.add("hidden");
+};
+
+function setFiles(files){
+    if(!files.length) return;
+
+    for(let f of files){
+        if(f.type !== "application/pdf"){
+            alert("Only PDF allowed");
+            return;
+        }
+    }
+
+    fileName.innerText = files.length>1 ?
+        files.length+" PDF files selected" :
+        files[0].name;
+
+    removeBtn.classList.remove("hidden");
+    simulate(bar);
+}
+
+});
+
+function simulate(bar){
+let p=0;
+const t=setInterval(()=>{
+p+=10;
+bar.style.width=p+"%";
+if(p>=100) clearInterval(t);
+},70);
+}
+
+function requiredFilesUploaded(){
+let inputs=[...fresher.querySelectorAll("input[type=file][required]")];
+if(typeSelect.value==="experienced"){
+inputs.push(...exp.querySelectorAll("input[type=file][required]"));
+}
+return inputs.every(i=>i.files.length>0);
+}
+
+document.getElementById("uploadForm").onsubmit = e=>{
+e.preventDefault();
+
+if(!typeSelect.value){
+msg.style.color="red";
+msg.innerText="Select candidate type";
+return;
+}
+
+if(!requiredFilesUploaded()){
+msg.style.color="red";
+msg.innerText="Upload all mandatory documents";
+return;
+}
+
+msg.style.color="green";
+msg.innerText="Documents uploaded successfully";
+};
+</script>
+
+</body>
+</html>

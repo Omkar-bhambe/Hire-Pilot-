@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interview Completed</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 600px;
+      width: 100%;
+      padding: 60px 40px;
+      text-align: center;
+    }
+
+    .success-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      animation: bounce 0.6s ease-in-out;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .success-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #10b981;
+      margin-bottom: 15px;
+    }
+
+    .success-subtitle {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .results-section {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 30px;
+      text-align: left;
+    }
+
+    .results-section h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .result-item:last-child {
+      border-bottom: none;
+    }
+
+    .result-label {
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .result-value {
+      font-size: 18px;
+      font-weight: 600;
+      color: #10b981;
+    }
+
+    .score-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-weight: 600;
+      margin: 15px 0;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-width: 140px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #333;
+      border: 2px solid #e5e7eb;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .interview-details {
+      background: #ecfdf5;
+      border: 1px solid #d1fae5;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .interview-details p {
+      color: #065f46;
+      margin: 8px 0;
+      font-size: 14px;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f4f6;
+      border-top: 4px solid #10b981;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: #10b981;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Loading interview results...</p>
+    </div>
+
+    <div class="success-icon">✅</div>
+    <h1 class="success-title">Interview Completed!</h1>
+    <p class="success-subtitle">
+      Thank you for your time. Your interview has been successfully submitted
+      and our team will review your responses shortly.
+    </p>
+
+    <!-- Admin Results Section (Hidden by default) -->
+    <div id="adminResults" style="display: none">
+      <div class="results-section">
+        <h3>Interview Results</h3>
+        <div class="result-item">
+          <span class="result-label">Candidate</span>
+          <span class="result-value" id="candidateName">-</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Overall Score</span>
+          <span class="score-badge" id="overallScore">0/10</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Questions Asked</span>
+          <span class="result-value" id="questionsCount">0</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Duration</span>
+          <span class="result-value" id="duration">-</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">Status</span>
+          <span class="result-value" id="status">-</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button class="btn btn-primary" id="backBtn" onclick="goBack()">
+        Back to Home
+      </button>
+      <button class="btn btn-secondary" id="logoutBtn" onclick="logout()" style="display: none">
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Check if user is admin
+    function isAdminUser() {
+      // Check localStorage for admin token
+      const adminToken = localStorage.getItem("adminToken");
+
+      // Admin should have adminToken
+      return !!adminToken;
+    }
+
+    // Get interview ID from sessionStorage or URL
+    function getInterviewId() {
+      const params = new URLSearchParams(window.location.search);
+      return (
+        params.get("interview_id") || sessionStorage.getItem("interviewId")
+      );
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm("Are you sure you want to logout?")) {
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("adminUser");
+        sessionStorage.clear();
+        window.location.href = "admin-login.html";
+      }
+    }
+
+    // Fetch and display interview results (Admin only)
+    async function loadResults() {
+      const interviewId = getInterviewId();
+      const isAdmin = isAdminUser();
+
+      console.log("Is Admin:", isAdmin);
+      console.log("Interview ID:", interviewId);
+
+      // Show/hide logout button based on admin status
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (isAdmin && logoutBtn) {
+        logoutBtn.style.display = "block";
+      }
+
+      if (!isAdmin) {
+        // Candidate view - hide admin details
+        document.getElementById("adminResults").style.display = "none";
+        document.getElementById("loading").style.display = "none";
+        return;
+      }
+
+      if (!interviewId) {
+        console.error("No interview ID found");
+        document.getElementById("loading").innerHTML =
+          '<p style="color: red;">Interview ID not found. Please start from admin dashboard.</p>';
+        return;
+      }
+
+      try {
+        const token = localStorage.getItem("adminToken");
+
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
+
+        const response = await fetch(
+          `/api/admin/interviews/${interviewId}/report`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch results: ${response.status} ${response.statusText}`,
+          );
+        }
+
+        const data = await response.json();
+        console.log("Interview data:", data);
+
+        if (data.status === "success") {
+          const interview = data.interview;
+          const evaluation = data.evaluation;
+
+          // Display results
+          document.getElementById("candidateName").textContent =
+            interview.candidate.name || "Unknown";
+          document.getElementById("overallScore").textContent =
+            (evaluation.overall_score || 0).toFixed(1) + "/10";
+          document.getElementById("questionsCount").textContent =
+            interview.statistics.total_questions || 0;
+          document.getElementById("status").textContent =
+            interview.status || "Completed";
+
+          // Calculate duration
+          if (interview.dates.started && interview.dates.completed) {
+            const start = new Date(interview.dates.started);
+            const end = new Date(interview.dates.completed);
+            const minutes = Math.round((end - start) / 60000);
+            document.getElementById("duration").textContent =
+              `${minutes} minutes`;
+          }
+
+          document.getElementById("adminResults").style.display = "block";
+        } else {
+          throw new Error(data.message || "Failed to load interview data");
+        }
+      } catch (error) {
+        console.error("Error loading results:", error);
+        document.getElementById("loading").innerHTML =
+          '<p style="color: red;">Error loading results: ' +
+          error.message +
+          "</p>";
+      } finally {
+        document.getElementById("loading").style.display = "none";
+      }
+    }
+
+    // Go back to home
+    function goBack() {
+      const isAdmin = isAdminUser();
+
+      if (isAdmin) {
+        // Redirect to admin login page
+        window.location.href = "admin-login.html";
+      } else {
+        // Redirect candidate to home/thank you
+        localStorage.removeItem("interviewId");
+        sessionStorage.removeItem("interviewId");
+        sessionStorage.removeItem("candidateDetails");
+        sessionStorage.removeItem("interviewDetails");
+        window.location.href = "index.html";
+      }
+    }
+
+    // Confetti animation
+    function createConfetti() {
+      const colors = ["#10b981", "#667eea", "#764ba2", "#f59e0b"];
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement("div");
+        confetti.className = "confetti";
+        confetti.style.left = Math.random() * 100 + "%";
+        confetti.style.backgroundColor =
+          colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animation = `fall ${2 + Math.random() * 2}s linear forwards`;
+        document.body.appendChild(confetti);
+
+        setTimeout(() => confetti.remove(), 4000);
+      }
+    }
+
+    // Add CSS animation
+    const style = document.createElement("style");
+    style.textContent = `
+            @keyframes fall {
+                to {
+                    transform: translateY(100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+    document.head.appendChild(style);
+
+    // Load results when page loads
+    window.addEventListener("load", () => {
+      createConfetti();
+      loadResults();
+    });
+  </script>
+</body>
+
+</html>

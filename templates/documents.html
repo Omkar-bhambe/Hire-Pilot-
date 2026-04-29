@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Candidate Documents</title>
+</head>
+<body>
+
+<h2>Uploaded Documents</h2>
+
+{% if documents|length == 0 %}
+<p>No documents uploaded.</p>
+{% endif %}
+
+<ul>
+{% for doc in documents %}
+    <li>
+        <b>{{ doc.document_type }}</b> —
+        <a href="{{ url_for('download_file', filename=doc.file_name) }}">
+            Download
+        </a>
+        |
+        Status:
+        {% if doc.verification_status == "Pending" %}
+            <span style="color:orange;">Pending</span>
+        {% elif doc.verification_status == "Verified" %}
+            <span style="color:green;">Verified</span>
+        {% else %}
+            <span style="color:red;">Rejected</span>
+        {% endif %}
+    </li>
+{% endfor %}
+</ul>
+
+<br>
+<a href="{{ url_for('hr_dashboard') }}">← Back to Dashboard</a>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HR Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body { font-family: Arial; background:#f4f6f9; }
+        .container { width: 90%; margin: auto; padding: 20px; }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .status-green { color: green; font-weight: bold; }
+        .status-red { color: red; font-weight: bold; }
+        .status-orange { color: orange; font-weight: bold; }
+
+        ul { padding-left: 20px; }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+<h2>HR Candidate Dashboard</h2>
+
+{% if candidates|length == 0 %}
+    <p>No candidates uploaded yet.</p>
+{% endif %}
+
+{% for c in candidates %}
+<div class="card">
+
+    <h3>{{ c.email }}</h3>
+    <p><b>Candidate Type:</b> {{ c.candidate_type }}</p>
+
+    <!-- Upload Status -->
+    <p>
+        <b>Upload Status:</b>
+        {% if c.upload_status == "Uploaded" %}
+            <span class="status-green">Documents Uploaded</span>
+        {% else %}
+            <span class="status-red">No Documents Uploaded</span>
+        {% endif %}
+    </p>
+
+    <!-- Employment Details -->
+    {% if c.employment and c.employment.company %}
+    <h4>Employment Details</h4>
+    <p><b>Company:</b> {{ c.employment.company }}</p>
+    <p><b>Designation:</b> {{ c.employment.designation }}</p>
+    <p><b>Duration:</b> {{ c.employment.duration }}</p>
+    <p><b>UAN:</b> {{ c.employment.uan }}</p>
+    {% endif %}
+
+    <!-- Documents Section -->
+    <h4>Uploaded Documents</h4>
+
+    {% if c.documents and c.documents|length > 0 %}
+    <ul>
+        {% for doc in c.documents %}
+        <li>
+            <b>{{ doc.document_type }}</b>
+            |
+            Status:
+            {% if doc.verification_status == "Pending" %}
+                <span class="status-orange">Pending</span>
+            {% elif doc.verification_status == "Verified" %}
+                <span class="status-green">Verified</span>
+            {% elif doc.verification_status == "Rejected" %}
+                <span class="status-red">Rejected</span>
+            {% else %}
+                <span class="status-orange">Unknown</span>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>No documents uploaded.</p>
+    {% endif %}
+
+</div>
+{% endfor %}
+
+</div>
+</body>
+</html>

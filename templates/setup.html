@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HirePilot | Assessment Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfcfd; }
+        .glass-header { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #f2f4f7; }
+        .input-focus:focus { border-color: #6366f1; background-color: #ffffff; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+    </style>
+</head>
+<body class="p-8 md:p-12">
+    <div class="max-w-7xl mx-auto">
+
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <h1 class="text-4xl font-black text-slate-900 tracking-tight">Assessment Command Center</h1>
+                <p class="text-slate-500 font-medium mt-1">
+                    Drive ID: <span class="text-indigo-600 font-bold">#{{ session_id }}</span> |
+                    Session: <span class="text-slate-900 font-bold">{{ role }}</span>
+                </p>
+            </div>
+            <div class="flex gap-4">
+                <a href="/admin/session/{{ session_id }}" class="bg-white border-2 border-slate-200 px-6 py-3 rounded-2xl text-xs font-black uppercase hover:bg-slate-50 transition">Back to Control Room</a>
+                <button onclick="location.href='/api/download-all-zip/{{ session_id }}'" class="bg-slate-900 text-white px-6 py-3 rounded-2xl text-xs font-black uppercase shadow-lg hover:bg-indigo-600 transition">Download Data (ZIP)</button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-12 gap-8 mb-12">
+
+            <div class="col-span-12 lg:col-span-8 space-y-8">
+
+                <section class="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-extrabold text-slate-900">Job Description Context</h2>
+                        <button onclick="updateJD()" id="jdSaveBtn" class="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-100 transition">Save Changes</button>
+                    </div>
+                    <textarea id="live_jd" class="w-full h-48 bg-slate-50 p-6 rounded-3xl border-2 border-transparent input-focus outline-none text-sm text-slate-600 leading-relaxed transition-all">{{ jd }}</textarea>
+                </section>
+
+                <section class="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm">
+                    <h2 class="text-xl font-extrabold text-slate-900 mb-8">Exam Parameters</h2>
+
+                    <div class="grid grid-cols-2 gap-6 mb-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Question Count</label>
+                            <input type="number" id="q_count" value="90" class="w-full bg-slate-50 p-5 rounded-2xl border-2 border-transparent input-focus outline-none font-bold text-lg transition">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Time Limit (Mins)</label>
+                            <input type="number" id="t_limit" value="60" class="w-full bg-slate-50 p-5 rounded-2xl border-2 border-transparent input-focus outline-none font-bold text-lg transition">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 mb-10">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-2">Min. Passing Score (%)</label>
+                        <input type="number" id="min_score" value="70" class="w-full bg-slate-50 p-5 rounded-2xl border-2 border-transparent input-focus outline-none font-black text-indigo-600 text-lg transition">
+                        <p class="text-[9px] text-slate-400 italic font-medium ml-2">* Candidates below this will be auto-rejected by the Evaluation Agent.</p>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <button onclick="generateTest()" id="genBtn" class="flex-grow bg-indigo-600 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all">
+                            Generate AI Assessment
+                        </button>
+                        <button onclick="sendBulkInvites()" id="inviteBtn" class="flex-grow bg-emerald-600 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-emerald-700 shadow-lg shadow-emerald-100 transition-all opacity-50 pointer-events-none">
+                            Dispatch Test Links
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <div class="col-span-12 lg:col-span-4 bg-gradient-to-br from-slate-900 to-indigo-950 p-10 rounded-[3rem] text-white shadow-xl flex flex-col justify-between">
+                <div>
+                    <h3 class="font-black text-lg tracking-tight mb-10">Assessment Status</h3>
+                    <div class="space-y-12">
+                        <div>
+                            <p class="text-[10px] font-black uppercase opacity-40 tracking-widest">Candidates Shortlisted</p>
+                            <p class="text-6xl font-black mt-2">{{ candidates|length }}</p>
+                        </div>
+                        <div class="pt-10 border-t border-white/10">
+                            <p class="text-[10px] font-black uppercase opacity-40 tracking-widest">Test Ready</p>
+                            <div class="flex items-center gap-3 mt-4">
+                                <div id="statusDot" class="h-3 w-3 rounded-full bg-slate-600"></div>
+                                <span id="statusText" class="text-sm font-bold text-slate-400 italic">No Test Generated</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
+            <div class="p-8 border-b border-slate-50 flex justify-between items-center">
+                <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Shortlisted Candidates Only</h3>
+            </div>
+            <table class="w-full text-left">
+                <thead class="bg-slate-50/50">
+                    <tr>
+                        <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Candidate</th>
+                        <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Match Score</th>
+                        <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Test Result</th>
+                        <th class="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Action Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    {% for cand in candidates %}
+                    <tr class="hover:bg-slate-50/30 transition">
+                        <td class="px-10 py-7">
+                            <div class="font-bold text-slate-900">{{ cand.name }}</div>
+                            <div class="text-[10px] text-slate-400 font-medium tracking-tight">{{ cand.email }}</div>
+                        </td>
+                        <td class="px-10 py-7 text-center">
+                            <span class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-[10px] font-black">{{ cand.match_score }}%</span>
+                        </td>
+                        <td class="px-10 py-7 text-center font-black text-slate-300">
+                            {{ cand.test_score | default('--') }}
+                        </td>
+                        <td class="px-10 py-7 text-right">
+                            <span class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest
+                                {{ 'bg-emerald-100 text-emerald-700' if cand.status == 'Shortlisted' else 'bg-indigo-100 text-indigo-700' }}">
+                                {{ cand.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="p-20 text-center text-slate-400 font-bold italic">No candidates found for this specific session.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // --- UPDATE JD LOGIC ---
+        async function updateJD() {
+            const btn = document.getElementById('jdSaveBtn');
+            const jdText = document.getElementById('live_jd').value;
+            btn.innerText = "Saving...";
+
+            try {
+                const res = await fetch('/api/update-session-jd', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ session_id: "{{ session_id }}", new_jd: jdText })
+                });
+                if (res.ok) {
+                    btn.innerText = "Saved ✓";
+                    btn.classList.replace('text-indigo-700', 'text-emerald-700');
+                    setTimeout(() => {
+                        btn.innerText = "Save Changes";
+                        btn.classList.replace('text-emerald-700', 'text-indigo-700');
+                    }, 2000);
+                }
+            } catch (err) { alert("Error updating JD"); }
+        }
+
+        // --- TEST GENERATION LOGIC ---
+        async function generateTest() {
+            const btn = document.getElementById('genBtn');
+            btn.disabled = true;
+            btn.innerText = "AI Processing...";
+
+            try {
+                const res = await fetch('/api/generate-test', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        session_id: "{{ session_id }}",
+                        q_count: document.getElementById('q_count').value,
+                        t_limit: document.getElementById('t_limit').value,
+                        min_score: document.getElementById('min_score').value, // ✅ Added Min Score to Payload
+                        jd_text: document.getElementById('live_jd').value
+                    })
+                });
+
+                if (res.ok) {
+                    btn.innerText = "Assessment Ready ✓";
+                    btn.classList.replace('bg-indigo-600', 'bg-slate-900');
+                    document.getElementById('inviteBtn').classList.remove('opacity-50', 'pointer-events-none');
+                    document.getElementById('statusDot').classList.replace('bg-slate-600', 'bg-emerald-400');
+                    document.getElementById('statusText').innerText = "Questions Live ✓";
+                    document.getElementById('statusText').classList.replace('text-slate-400', 'text-emerald-400');
+                }
+            } catch (err) { btn.disabled = false; btn.innerText = "Retry Generation"; }
+        }
+
+        // --- INVITE LOGIC ---
+        async function sendBulkInvites() {
+            const btn = document.getElementById('inviteBtn');
+            btn.innerText = "Sending...";
+            try {
+                const res = await fetch('/api/send-bulk-invites', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ session_id: "{{ session_id }}" })
+                });
+                if (res.ok) {
+                    btn.innerText = "Dispatched ✓";
+                    setTimeout(() => location.reload(), 1500);
+                }
+            } catch (err) { alert("SMTP Dispatch Error"); }
+        }
+    </script>
+</body>
+</html>

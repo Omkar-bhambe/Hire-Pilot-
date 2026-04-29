@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HirePilot | Document Requirement Setup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfcfd; }</style>
+</head>
+<body class="p-12">
+
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-12">
+            <h1 class="text-3xl font-black text-slate-900 tracking-tight">Compliance Setup</h1>
+            <p class="text-slate-500 font-medium mt-2">Define which documents candidates must submit for session <span class="text-indigo-600 font-bold">#{{ session_id }}</span></p>
+        </header>
+
+        <div class="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-xl shadow-slate-200/40">
+            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-8">Required Documents</h3>
+
+            <div id="config-container" class="space-y-4">
+                </div>
+
+            <button onclick="addRow()" class="mt-8 flex items-center gap-2 text-indigo-600 font-extrabold text-sm hover:translate-x-1 transition-transform">
+                <span class="text-xl">+</span> Add New Requirement
+            </button>
+
+            <div class="mt-12 pt-8 border-t border-slate-50">
+                <button onclick="saveConfig()" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-indigo-600 transition-all shadow-lg shadow-indigo-100">
+                    Save & Deploy to Candidate Portal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initial configuration pulled from Firestore
+        let rows = {{ config | tojson if config else '[{"name": "Aadhar Card", "type": "single"}, {"name": "PAN Card", "type": "single"}, {"name": "Marksheets", "type": "multiple"}]' | safe }};
+
+        function render() {
+            const container = document.getElementById('config-container');
+            container.innerHTML = rows.map((r, i) => `
+                <div class="flex gap-4 items-center bg-slate-50 p-5 rounded-2xl border border-slate-100 animate-fade-in">
+                    <div class="flex-1">
+                        <input type="text" value="${r.name}"
+                               onchange="updateRow(${i}, 'name', this.value)"
+                               placeholder="e.g., Undergraduate Degree"
+                               class="w-full bg-white px-5 py-3 rounded-xl border border-slate-200 font-bold text-slate-700 outline-none focus:border-indigo-500 transition">
+                    </div>
+                    <div class="w-48">
+                        <select onchange="updateRow(${i}, 'type', this.value)"
+                                class="w-full bg-white px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-500 text-sm outline-none">
+                            <option value="single" ${r.type === 'single' ? 'selected' : ''}>Single File</option>
+                            <option value="multiple" ${r.type === 'multiple' ? 'selected' : ''}>Multiple Uploads</option>
+                        </select>
+                    </div>
+                    <button onclick="removeRow(${i})" class="h-10 w-10 flex items-center justify-center text-red-400 hover:bg-red-50 rounded-xl transition">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function updateRow(index, key, value) { rows[index][key] = value; }
+        function addRow() { rows.push({name: "", type: "single"}); render(); }
+        function removeRow(index) { rows.splice(index, 1); render(); }
+
+        async function saveConfig() {
+            const res = await fetch('/api/save-doc-config', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ session_id: "{{ session_id }}", config: rows })
+            });
+            if(res.ok) alert("Configuration live! Candidates will now see these requirements.");
+        }
+
+        render();
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+{
+  "interview_id": "interview_1770239348",
+  "full_name": "Anurag Sandbhor",
+  "email": "anuragsandbhor1111@gmail.com",
+  "job_description": "GenAI Engineer experienced in building Generative AI applications using APIs such as OpenAI, Gemini, Claude, Deep Research, Crew AI, LangChain and other LLM providers. The ideal candidate should have strong Python development skills and a solid understanding of prompt engineering, API integration, and LLM workflow design.\r\n\r\nResponsibilities\r\n\r\nDesign, develop, and deploy GenAI-powered applications using multiple LLM APIs.\r\n\r\nIntegrate AI models into backend systems using Python.\r\n\r\nImplement prompt optimization, context management, and output validation.\r\n\r\nCollaborate with cross-functional teams to design scalable AI solutions.\r\n\r\nContinuously evaluate model performance and experiment with emerging GenAI tools.\r\n\r\nRequirements\r\n\r\nProficient in Python, UI and API integration.\r\n\r\nExperience with OpenAI, Gemini, Claude or similar LLMs.\r\n\r\nUnderstanding of prompt engineering and GenAI application workflows.\r\n\r\nFamiliarity with frameworks like Flask, FastAPI or Streamlit is a plus.\r\n\r\nStrong problem-solving and innovation mindset.\r\n\r\n\r\nDesired Skills and Experience\r\nIntegration, Python, Gen AI\r\n\r\nJob search faster with Premium",
+  "resume_text": "Anurag Sandbho r \nPune , India  \n +91 8010148597      Portfolio  \nEducation  \nIndira College of Engineering and Management , Pune  Nov  2022 \u2013 May  2026 \nBachelor  of Engineering  in Artificial Intelligence and Data Science   \nExperience  \nTripify   Sep 2025 \u2013 Present  \nAI Agent Developer Intern  \n\u2022 Built intelligent AI agents capable of performing multi -step tasks through advanced reasoning and dynamic tool usage.  \n\u2022 Connected multiple APIs and vector databases to improve the agents\u2019 memory, contextual understanding, and user personalizatio n. \n\u2022 Developed automation workflows using LangGraph and LangChain to enable smooth and scalable agent operations.  \n\u2022 Worked closely with the backend team to fine -tune response times and ensure seamless integration within Tripify\u2019s travel platform.  \n  \nDecloud Labs  Jan 2025  \u2013 Jun 2025  \nArtificial Intelligence Intern   \n\u2022 Engineered end -to-end AI pipelines using LangChain for retrieval -augmented generation (RAG) systems.   \n\u2022 Integrated vector databases with LLMs to improve context -aware question answering and document search.  \n\u2022 Fine -tuned and evaluated LLMs for domain -specific tasks, enhancing model accuracy and response relevance.  \n\u2022 Collaborated on building chatbot assistants that interact with user -uploaded files and external sources using prompt engineering.  \n\u2022 Documented workflows and optimized performance, ensuring modular, scalable, and production -ready AI components . \n    21 Spheres                                                                                                                                                                                       Dec 2024 - Jan 2025  \n   Computer Vision Intern  \n\u2022 Developed a real -time object detection system using YOLO with optimized speed and accuracy.  \n\u2022 Applied advanced preprocessing techniques to enhance image quality in dynamic environments.  \n\u2022 Streamlined image processing workflows using GPU acceleration for improved performance.  \n\u2022 Refined the model thorough testing to ensure reliable and consistent object recognition . \nProjects  \nAquaNav  | Python , MYSQL   \n\u2022 Developed an AI -based system that uses the D* Lite algorithm to dynamically plan and re -route ocean navigation paths in real time.  \n\u2022 Incorporated real -time environmental and geographical data like weather, sea currents, and terrain to improve route efficiency, safety, \nand reduce fuel usage.  \n\u2022 Applied advanced concepts in graph theory and pathfinding to solve complex maritime routing challenges.  \n\u2022 Built a responsive decision -making system capable of adapting to sudden changes during a vessel's journey.  \n \nCancer Detection System  | Python , Numpy, Pandas, Sklearn                                                                                                                 Code    \n\u2022 Utilized the Wisconsin Breast Cancer dataset to develop a machine learning model for tumor classification.  \n\u2022 Conducted data preprocessing, feature selection, and model training using algorithms like Random Forest and SVM.  \n\u2022 Achieved a classification accuracy of 95%, demonstrating strong predictive performance on unseen data.  \n\u2022 Enhanced early detection capabilities, contributing to faster and more reliable breast cancer  diagnostics  \n \nTechnical  Skills  \n Languages :   Python,  SQL, HTML  \nTechnologies/Frameworks :  Pandas, NumPy,  OpenCV, scikit -learn, LangChain, TensorFlow,  PyTorch , Matplotlib,  Seaborn , \nTensorflow  \nRelated Course Work :, Problem Solving, Machine Learning, Deep Learning , Data Science , Computer vision, Data Processing , Natural \nLanguage Processing , Artificial Neural Network  \nTools : Github,  Jupyter Notebook , Power BI            \nCertifications  \n Power   BI                                                                                                                                                                                                                                   Link                                                                   \n Business Analysis and Process Managemen t                                                                                                                                                                                        Link \n Data Analytics and Visualization                             Link \n Google Cloud Computing                       Link      \n Fundamental Of Gen AI                      Link \n GenAI for Business Intelligence Analysts                                                                                                                                                                                                Link \nanuragsandbhor1111@gmail.com  \n LinkedIn  \n Github  ",
+  "created_at": "2026-02-05T02:39:08.978767",
+  "status": "created",
+  "questions": [
+    {
+      "text": "Tell us about your experience with Python",
+      "category": "experience",
+      "difficulty": "easy"
+    },
+    {
+      "text": "Describe a challenging project you worked on",
+      "category": "behavioral",
+      "difficulty": "medium"
+    },
+    {
+      "text": "How would you handle a system design problem?",
+      "category": "technical",
+      "difficulty": "hard"
+    },
+    {
+      "text": "What would you do if faced with a tight deadline?",
+      "category": "situational",
+      "difficulty": "medium"
+    },
+    {
+      "text": "How do you approach problem solving?",
+      "category": "problem_solving",
+      "difficulty": "medium"
+    },
+    {
+      "text": "Tell us about your AI/Integration experience",
+      "category": "technical",
+      "difficulty": "hard"
+    },
+    {
+      "text": "Describe your approach to learning new technologies",
+      "category": "behavioral",
+      "difficulty": "easy"
+    },
+    {
+      "text": "How do you handle code review feedback?",
+      "category": "behavioral",
+      "difficulty": "medium"
+    },
+    {
+      "text": "What is your experience with deployment and DevOps?",
+      "category": "experience",
+      "difficulty": "medium"
+    },
+    {
+      "text": "How do you ensure code quality in your projects?",
+      "category": "problem_solving",
+      "difficulty": "hard"
+    }
+  ],
+  "answers": [],
+  "violations": [],
+  "warnings": 0,
+  "category_distribution": {
+    "technical": 2,
+    "behavioral": 3,
+    "situational": 1,
+    "problem_solving": 2,
+    "experience": 2
+  }
+}
