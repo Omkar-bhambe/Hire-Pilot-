@@ -9,8 +9,6 @@ gevent==23.9.1
 langgraph>=0.0.21
 langchain>=0.1.0
 langchain-google-genai>=0.0.9
-opencv-python==4.8.0.76
-deepface==0.0.75
 
 Pillow==10.0.0
 werkzeug==3.0.0
