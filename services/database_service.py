@@ -1,15 +1,23 @@
 import os
+import json
 import firebase_admin
 from firebase_admin import credentials, firestore, initialize_app
 from datetime import datetime
 import uuid
-# Initialize Firebase Admin SDK
-# Use the path to your downloaded JSON key
-base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-key_path = os.path.join(base_dir, "firebase-key.json")
 
-# Now initialize with the exact full path
-cred = credentials.Certificate(key_path)
+# Initialize Firebase Admin SDK
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+local_key_path = os.path.join(base_dir, "firebase-key.json")
+render_secret_path = "/etc/secrets/firebase-key.json"
+
+if os.environ.get("FIREBASE_CREDENTIALS"):
+    cred_dict = json.loads(os.environ.get("FIREBASE_CREDENTIALS"))
+    cred = credentials.Certificate(cred_dict)
+elif os.path.exists(render_secret_path):
+    cred = credentials.Certificate(render_secret_path)
+else:
+    cred = credentials.Certificate(local_key_path)
+
 if not firebase_admin._apps:
     initialize_app(cred)
 db = firestore.client()
