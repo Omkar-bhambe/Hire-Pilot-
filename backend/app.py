@@ -25,7 +25,11 @@ from services.agent_service import OnlineTestAgent
 
 
 
-app = Flask(__name__)
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+template_dir = os.path.join(base_dir, 'templates')
+static_dir = os.path.join(base_dir, 'static')
+
+app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 from flask_cors import CORS
 CORS(app)
 
