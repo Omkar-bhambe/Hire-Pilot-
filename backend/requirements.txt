@@ -22,3 +22,4 @@ pytest-cov==4.1.0
 openai>=1.35.0
 gunicorn==21.2.0
 gevent-websocket==0.10.1
+fpdf==1.7.2
