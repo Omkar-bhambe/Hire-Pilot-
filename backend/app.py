@@ -11,7 +11,7 @@ from werkzeug.utils import secure_filename
 from fpdf import FPDF
 import datetime
 import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from services.database_service import db
 from services.email_service import send_admin_approval_email
 # from werkzeug.security import generate_password_hash
