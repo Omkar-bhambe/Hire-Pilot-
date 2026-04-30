@@ -10,6 +10,8 @@ from flask import Flask, render_template, request, jsonify, send_file, session, 
 from werkzeug.utils import secure_filename
 from fpdf import FPDF
 import datetime
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from services.database_service import db
 from services.email_service import send_admin_approval_email
 # from werkzeug.security import generate_password_hash
@@ -21,8 +23,7 @@ from services.resume_parser import extract_text_from_file
 from services.notification_service import send_shortlist_notification, send_test_invite_notification
 from services.agent_service import OnlineTestAgent
 
-import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), 'backend'))
+
 
 app = Flask(__name__)
 from flask_cors import CORS
