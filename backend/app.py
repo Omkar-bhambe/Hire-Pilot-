@@ -557,7 +557,7 @@ def reset_password(token):
 # Test Agent
 
 
-ai_agent = OnlineTestAgent('AIzaSyCdvHcqScAzrXgl2ycqytHJLMi_NQJHLmI')
+ai_agent = OnlineTestAgent()
 
 @app.route('/admin/setup/<session_id>')
 def setup_page(session_id):

@@ -4,11 +4,15 @@ import google.generativeai as genai
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 import logging
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 logger = logging.getLogger(__name__)
 
 # Use gemini-1.5-flash: It has the highest free limits (15 RPM / 1M TPM)
 MODEL_NAME = 'gemini-2.5-flash'
-genai.configure(api_key=os.getenv("AIzaSyCuLV-6RKIcpv23wKJGMrvs9syjujeLpvU"))
+genai.configure(api_key=os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY"))
 model = genai.GenerativeModel(MODEL_NAME)
 
 class GeminiQuotaError(Exception):

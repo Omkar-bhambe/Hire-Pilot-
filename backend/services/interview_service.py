@@ -16,7 +16,7 @@ from services.database_service import (
 )
 
 load_dotenv()
-API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyCdvHcqScAzrXgl2ycqytHJLMi_NQJHLmI")
+API_KEY = os.getenv("GEMINI_API_KEY", "")
 gemini = GeminiClient(api_key=API_KEY)
 question_agent = QuestionAgent(gemini)
 

@@ -23,7 +23,7 @@ class Config:
     PORT = int(os.getenv('FLASK_PORT', '5000'))
     
     # API keys
-    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', 'AIzaSyCWwFyiXXeqaRmb8xb5XvDIbd_nIbzNVE0')
+    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
     # OpenAI TTS
     OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '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')
     

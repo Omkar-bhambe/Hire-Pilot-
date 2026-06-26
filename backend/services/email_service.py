@@ -1,12 +1,16 @@
+import os
 import smtplib
 from email.mime.text import MIMEText
+from dotenv import load_dotenv
 from utils.gemini_client import GeminiClient
+
+load_dotenv()
 
 # ================= CONFIG =================
 EMAIL = "11anurag04@gmail.com"
 PASSWORD = "nycj vumj ppgi xhbc"
 
-gemini = GeminiClient(api_key="YOUR_GEMINI_API_KEY")
+gemini = GeminiClient(api_key=os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY"))
 
 
 # ================= EMAIL CONTENT =================

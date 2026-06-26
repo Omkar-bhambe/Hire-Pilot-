@@ -5,9 +5,15 @@ import time
 
 
 class OnlineTestAgent:
-    def __init__(self, api_key):
+    def __init__(self, api_key=None):
         """Initializes the Gemini engine with high-output stability."""
-        genai.configure(api_key='AIzaSyAC1S4MNTmwUBUI_3UZoxlfEOUbDFTf8iE')
+        import os
+        from dotenv import load_dotenv
+        load_dotenv()
+        actual_key = api_key or os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+        if not actual_key:
+            raise ValueError("No Gemini/Google API key found. Please provide one or set GOOGLE_API_KEY/GEMINI_API_KEY in your env.")
+        genai.configure(api_key=actual_key)
         # Using the model specified in your existing setup
         self.model = genai.GenerativeModel('gemini-2.5-flash')
 
